@@ -1,0 +1,111 @@
+Domain ServiciosParaElHogar {
+
+    domainVisionStatement = "Conectar las necesidades de hogares, aseguradoras, bancos y comercios con proveedores de servicios confiables, gestionando el ciclo de vida de los trabajos desde su creación hasta su ejecución y cierre."
+
+    Subdomain GestionDeTrabajos {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain GestionDeProveedores {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain AcreditacionYElegibilidad {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain Marketplace {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain Cotizaciones {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain Asignacion {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain ReglasDePartnerB2B2C {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain GestionDeEjecucion {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain CalidadGarantiasYDisputas {
+        type = SUPPORTING_DOMAIN
+    }
+
+    Subdomain PagosYLiquidaciones {
+        type = SUPPORTING_DOMAIN
+    }
+
+    Subdomain DatosEIA {
+        type = SUPPORTING_DOMAIN
+    }
+
+}
+
+Domain GestionDeSiniestrosYPolizas {
+
+    domainVisionStatement = "Gestionar el ciclo de atención de siniestros y pólizas provenientes de aseguradoras, coordinando su evaluación, aprobación y transformación en trabajos que puedan ser atendidos por la red de proveedores de Hogar de los Alpes."
+
+    Subdomain GestionDeSiniestros {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain GestionDeCoberturas {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain OrquestacionDeAtencion {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain ReglasDePartnerParaSiniestros {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain EvidenciasYCierre {
+        type = SUPPORTING_DOMAIN
+    }
+
+}
+
+Domain ServiciosRecurrentesDelHogar {
+
+    domainVisionStatement = "Proporcionar servicios recurrentes para el hogar mediante modelos de suscripción que permitan contratar, programar y gestionar servicios periódicos de forma confiable y flexible"
+
+    Subdomain Suscripciones {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain PlanificacionRecurrente {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain GestionDeServiciosPeriodicos {
+        type = CORE_DOMAIN
+    }
+
+}
+
+Domain ServiciosFinancierosParaProveedores {
+
+    domainVisionStatement = "Proporcionar servicios financieros a los proveedores de Hogar de los Alpes mediante wallets, pagos y mecanismos de scoring que permitan facilitar el acceso a micropréstamos utilizando su historial operacional"
+
+    Subdomain WalletDeProveedores {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain ServiciosFinancierosYPagos {
+        type = CORE_DOMAIN
+    }
+
+    Subdomain ScoringYMicroprestamos {
+        type = CORE_DOMAIN
+    }
+
+}
