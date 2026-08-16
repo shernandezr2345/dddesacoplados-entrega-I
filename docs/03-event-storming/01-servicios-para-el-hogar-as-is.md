@@ -13,6 +13,8 @@ El flujo representa el ciclo de vida de un trabajo, desde la identificación del
 
 ![EventStorming AS-IS - Servicios para el hogar](image.png)
 
+
+Miro: https://miro.com/app/board/uXjVHx24D-g=/?share_link_id=17298556300
 ---
 
 ## 3. Actores
