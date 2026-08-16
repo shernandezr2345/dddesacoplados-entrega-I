@@ -6,6 +6,23 @@ Actualmente, HdA gestiona más de 12.000 trabajos diarios, cuenta con aproximada
 
 El principal reto consiste en identificar las capacidades de negocio que deben evolucionar de manera independiente. Por esta razón, la identificación de dominios y subdominios utiliza como insumos los procesos del negocio, los actores, la estructura organizacional y la estrategia futura de HdA.
 
+<img width="588" height="775" alt="Dominios y subdominios HdA (3)" src="https://github.com/user-attachments/assets/7765174e-e4c4-48d1-ad58-5f129662bde8" />
+
+<img width="881" height="641" alt="Dominios y subdominios HdA (5)" src="https://github.com/user-attachments/assets/ac244940-7214-441c-9df2-8fcecc6dba9d" />
+
+<img width="832" height="1035" alt="Dominios y subdominios HdA (6)" src="https://github.com/user-attachments/assets/9b656b89-be2f-4c67-b0c9-2c0202d2f77f" />
+
+Se realiza la identificación de los dominios 
+
+<img width="786" height="625" alt="Dominios y subdominios HdA (7)" src="https://github.com/user-attachments/assets/c86d43f4-fce5-4a33-b5dd-f5457754d665" />
+
+<img width="1031" height="577" alt="Dominios y subdominios HdA (8)" src="https://github.com/user-attachments/assets/54c0c024-1224-4f0b-b092-cd1389db07f1" />
+
+
+Para visualizar mejor el ejercicio realizado en equipo diríjase al siguiente link:   
+
+https://uniandes-my.sharepoint.com/:u:/g/personal/s_hernandezr2345_uniandes_edu_co/IQDv1vSRFTOkRJUvFYTEsn9iAdJBW6Yziup5J7WFYJVZt8I?e=9e50dO
+
 ## Dominio 1: Servicios para el hogar — AS-IS
 
 ### Vision Statement
