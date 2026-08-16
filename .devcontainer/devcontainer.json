@@ -1,0 +1,10 @@
+{
+    "name": "DDD - Hogar de los Alpes",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "contextmapper.context-mapper-vscode-extension"
+            ]
+        }
+    }
+}
