@@ -20,19 +20,19 @@ ContextMap HogarDeLosAlpesEquiposAsIs {
 	contains EquipoWalletYPrestamos
 
 	EquipoWorkflows [P]<->[P] EquipoAsistenteIA {
-		implementationTechnology = "Coordinacion obligatoria en cada release porque el asistente escribe el modelo del trabajo"
+		implementationTechnology = "Coordinación obligatoria en cada release porque el asistente escribe el modelo del trabajo"
 	}
 
 	EquipoWorkflows [P]<->[P] EquipoCotizaciones {
-		implementationTechnology = "Misma division y mismo modelo; el cambio de alcance atraviesa a ambos equipos"
+		implementationTechnology = "Misma división y mismo modelo; el cambio de alcance atraviesa a ambos equipos"
 	}
 
 	EquipoWorkflows [P]<->[P] EquipoPublicacionYBusqueda {
-		implementationTechnology = "La publicacion es un estado del sub-trabajo, de modo que ambos equipos tocan la misma tabla"
+		implementationTechnology = "La publicación es un estado del sub-trabajo, de modo que ambos equipos tocan la misma tabla"
 	}
 
 	EquipoWorkflows [P]<->[P] EquipoIntegracionesB2B2C {
-		implementationTechnology = "Cualquier cambio en el modelo del trabajo obliga a regresionar las mas de 30 integraciones"
+		implementationTechnology = "Cualquier cambio en el modelo del trabajo obliga a regresionar las más de 30 integraciones"
 	}
 
 	EquipoWorkflows [P]<->[P] EquipoReglasDePartner {
@@ -44,31 +44,31 @@ ContextMap HogarDeLosAlpesEquiposAsIs {
 	}
 
 	EquipoWorkflows [P]<->[P] EquipoCalidadYDisputas {
-		implementationTechnology = "Cierre, evidencia y disputa se resuelven en la misma transaccion del trabajo"
+		implementationTechnology = "Cierre, evidencia y disputa se resuelven en la misma transacción del trabajo"
 	}
 
 	EquipoIntegracionesB2B2C [P]<->[P] EquipoReglasDePartner {
-		implementationTechnology = "Misma division de Siniestros, mismo paquete de codigo y misma tabla de acuerdos"
+		implementationTechnology = "Misma división de Siniestros, mismo paquete de código y misma tabla de acuerdos"
 	}
 
 	EquipoRegistro [P]<->[P] EquipoAcreditacion {
-		implementationTechnology = "El estado de verificacion es una columna de la tabla de proveedores que mantiene Registro"
+		implementationTechnology = "El estado de verificación es una columna de la tabla de proveedores que mantiene Registro"
 	}
 
 	EquipoPublicacionYBusqueda [P]<->[P] EquipoRegistro {
-		implementationTechnology = "La asignacion depende del esquema de perfil, cobertura y disponibilidad"
+		implementationTechnology = "La asignación depende del esquema de perfil, cobertura y disponibilidad"
 	}
 
 	EquipoPublicacionYBusqueda [P]<->[P] EquipoAcreditacion {
-		implementationTechnology = "La elegibilidad se calcula leyendo el estado de acreditacion en linea"
+		implementationTechnology = "La elegibilidad se calcula leyendo el estado de acreditación en línea"
 	}
 
 	EquipoRegistro [P]<->[P] EquipoCalidadYDisputas {
-		implementationTechnology = "La reputacion se materializa como campo de la tabla de proveedores"
+		implementationTechnology = "La reputación se materializa como campo de la tabla de proveedores"
 	}
 
 	EquipoPagos [P]<->[P] EquipoWalletYPrestamos {
-		implementationTechnology = "La billetera se construyo sobre el mismo esquema de pagos y ambos equipos comparten migraciones"
+		implementationTechnology = "La billetera se construyó sobre el mismo esquema de pagos y ambos equipos comparten migraciones"
 	}
 
 	EquipoPlataforma [U]->[D] EquipoWorkflows {
@@ -76,19 +76,19 @@ ContextMap HogarDeLosAlpesEquiposAsIs {
 	}
 
 	EquipoPlataforma [U]->[D] EquipoRegistro {
-		implementationTechnology = "El proveedor extiende la cuenta generica de plataforma"
+		implementationTechnology = "El proveedor extiende la cuenta genérica de plataforma"
 	}
 
 	EquipoPlataforma [U]->[D] EquipoIntegracionesB2B2C {
-		implementationTechnology = "Las credenciales de los partners son cuentas tecnicas del esquema de identidad"
+		implementationTechnology = "Las credenciales de los partners son cuentas técnicas del esquema de identidad"
 	}
 
 	EquipoPlataforma [U]->[D] EquipoGestionDeAgentes {
-		implementationTechnology = "Roles y permisos de los agentes definidos en el modelo de acceso generico"
+		implementationTechnology = "Roles y permisos de los agentes definidos en el modelo de acceso genérico"
 	}
 
 	EquipoDatosEIA [U]->[D] EquipoAsistenteIA {
-		implementationTechnology = "Datos e IA aporta los modelos de diagnostico pero no despliega codigo propio"
+		implementationTechnology = "Datos e IA aporta los modelos de diagnóstico pero no despliega código propio"
 	}
 
 	EquipoWorkflows [U]->[D] EquipoPagos {
@@ -96,7 +96,7 @@ ContextMap HogarDeLosAlpesEquiposAsIs {
 	}
 
 	EquipoWorkflows [U]->[D] EquipoFinanzasYTesoreria {
-		implementationTechnology = "La facturacion al partner se deriva del historico de trabajos cerrados"
+		implementationTechnology = "La facturación al partner se deriva del histórico de trabajos cerrados"
 	}
 
 	EquipoReglasDePartner [U]->[D] EquipoFinanzasYTesoreria {
@@ -104,82 +104,82 @@ ContextMap HogarDeLosAlpesEquiposAsIs {
 	}
 
 	EquipoPagos [U]->[D] EquipoRiesgoYCumplimiento {
-		implementationTechnology = "Riesgo consulta la base operativa de pagos en modo lectura y exporta a hoja de calculo"
+		implementationTechnology = "Riesgo consulta la base operativa de pagos en modo lectura y exporta a hoja de cálculo"
 	}
 
 	EquipoAcreditacion [U]->[D] EquipoRiesgoYCumplimiento {
-		implementationTechnology = "Cumplimiento arma sus reportes a partir de los expedientes de verificacion"
+		implementationTechnology = "Cumplimiento arma sus reportes a partir de los expedientes de verificación"
 	}
 }
 
 BoundedContext EquipoAsistenteIA {
 	type = TEAM
-	domainVisionStatement = "Equipo Asistente IA, de la division Proveedores de Servicio bajo el CTO. Construye el agente conversacional que diagnostica el problema del hogar y crea el trabajo estructurado. Responsable del contexto Marketplace."
+	domainVisionStatement = "Equipo Asistente IA, de la división Proveedores de Servicio bajo el CTO. Construye el agente conversacional que diagnostica el problema del hogar y crea el trabajo estructurado. Responsable del contexto Marketplace."
 }
 
 BoundedContext EquipoDatosEIA {
 	type = TEAM
-	domainVisionStatement = "Equipo Datos e IA bajo el CTO. Aporta modelos de diagnostico, priorizacion y deteccion de fraude dentro del codigo de otros equipos, sin unidad desplegable propia. Responsable del contexto Datos e Inteligencia Artificial."
+	domainVisionStatement = "Equipo Datos e IA bajo el CTO. Aporta modelos de diagnóstico, priorización y detección de fraude dentro del código de otros equipos, sin unidad desplegable propia. Responsable del contexto Datos e Inteligencia Artificial."
 }
 
 BoundedContext EquipoPublicacionYBusqueda {
 	type = TEAM
-	domainVisionStatement = "Equipo Publicacion y Busqueda, de la division Proveedores de Servicio bajo el CTO. Publica oportunidades y encuentra la oferta elegible. Responsable del contexto Asignacion."
+	domainVisionStatement = "Equipo Publicación y Búsqueda, de la división Proveedores de Servicio bajo el CTO. Publica oportunidades y encuentra la oferta elegible. Responsable del contexto Asignación."
 }
 
 BoundedContext EquipoRegistro {
 	type = TEAM
-	domainVisionStatement = "Equipo Registro, de la division Proveedores de Servicio bajo el CTO. Mantiene perfil, servicios, cobertura, personal y disponibilidad del proveedor. Responsable del contexto Gestion de Proveedores."
+	domainVisionStatement = "Equipo Registro, de la división Proveedores de Servicio bajo el CTO. Mantiene perfil, servicios, cobertura, personal y disponibilidad del proveedor. Responsable del contexto Gestión de Proveedores."
 }
 
 BoundedContext EquipoAcreditacion {
 	type = TEAM
-	domainVisionStatement = "Equipo Acreditacion, de la division Proveedores de Servicio bajo el CTO. Verifica proveedores y tecnicos y los habilita por servicio y zona. Responsable del contexto Acreditacion y Elegibilidad."
+	domainVisionStatement = "Equipo Acreditación, de la división Proveedores de Servicio bajo el CTO. Verifica proveedores y técnicos y los habilita por servicio y zona. Responsable del contexto Acreditación y Elegibilidad."
 }
 
 BoundedContext EquipoWorkflows {
 	type = TEAM
-	domainVisionStatement = "Equipo Workflows, de la division Gestion de trabajos bajo el CTO. Dueno del motor de flujo y del modelo del Trabajo, y cuello de botella de coordinacion de toda la ingenieria. Responsable de los contextos Gestion de Trabajos y Orquestacion de Atencion del Siniestro."
+	domainVisionStatement = "Equipo Workflows, de la división Gestión de trabajos bajo el CTO. Dueño del motor de flujo y del modelo del Trabajo, y cuello de botella de coordinación de toda la ingeniería. Responsable de los contextos Gestión de Trabajos y Orquestación de Atención del Siniestro."
 }
 
 BoundedContext EquipoCotizaciones {
 	type = TEAM
-	domainVisionStatement = "Equipo Cotizaciones, de la division Gestion de trabajos bajo el CTO. Responsable de la propuesta economica, las solicitudes de informacion y las visitas al predio, en el contexto Cotizaciones."
+	domainVisionStatement = "Equipo Cotizaciones, de la división Gestión de trabajos bajo el CTO. Responsable de la propuesta económica, las solicitudes de información y las visitas al predio, en el contexto Cotizaciones."
 }
 
 BoundedContext EquipoIntegracionesB2B2C {
 	type = TEAM
-	domainVisionStatement = "Equipo Integraciones B2B2C, de la division Siniestros bajo el CTO. Mantiene un adaptador por cada partner y la sincronizacion de estado. Responsable de los contextos Gestion de Siniestros y Gestion de Polizas y Coberturas."
+	domainVisionStatement = "Equipo Integraciones B2B2C, de la división Siniestros bajo el CTO. Mantiene un adaptador por cada partner y la sincronización de estado. Responsable de los contextos Gestión de Siniestros y Gestión de Pólizas y Coberturas."
 }
 
 BoundedContext EquipoReglasDePartner {
 	type = TEAM
-	domainVisionStatement = "Equipo Reglas de Partner, de la division Siniestros bajo el CTO. Define SLA, redes permitidas, umbrales y pasos de aprobacion. Responsable de los contextos Reglas de Partner, Reglas de Partner para Siniestros, Gestion de Proveedores Homologados y Evaluacion y Aprobacion de Siniestros."
+	domainVisionStatement = "Equipo Reglas de Partner, de la división Siniestros bajo el CTO. Define SLA, redes permitidas, umbrales y pasos de aprobación. Responsable de los contextos Reglas de Partner, Reglas de Partner para Siniestros, Gestión de Proveedores Homologados y Evaluación y Aprobación de Siniestros."
 }
 
 BoundedContext EquipoPlataforma {
 	type = TEAM
-	domainVisionStatement = "Equipo Plataforma bajo el CTO. Provee identidad, acceso, notificaciones y las clases base compartidas por todo el monolito, de las que dependen los demas equipos."
+	domainVisionStatement = "Equipo Plataforma bajo el CTO. Provee identidad, acceso, notificaciones y las clases base compartidas por todo el monolito, de las que dependen los demás equipos."
 }
 
 BoundedContext EquipoGestionDeAgentes {
 	type = TEAM
-	domainVisionStatement = "Equipo Gestion de agentes bajo el COO. Opera y da soporte a los cerca de 100 agentes que coordinan manualmente el ciclo de vida de los trabajos. Responsable de los contextos Gestion de Ejecucion y Gestion de Evidencias."
+	domainVisionStatement = "Equipo Gestión de agentes bajo el COO. Opera y da soporte a los cerca de 100 agentes que coordinan manualmente el ciclo de vida de los trabajos. Responsable de los contextos Gestión de Ejecución y Gestión de Evidencias."
 }
 
 BoundedContext EquipoCalidadYDisputas {
 	type = TEAM
-	domainVisionStatement = "Equipo Calidad y disputas bajo el COO. Responsable de la aceptacion, las disputas, las garantias y la reputacion, en el contexto Calidad, Garantias y Disputas."
+	domainVisionStatement = "Equipo Calidad y disputas bajo el COO. Responsable de la aceptación, las disputas, las garantías y la reputación, en el contexto Calidad, Garantías y Disputas."
 }
 
 BoundedContext EquipoPagos {
 	type = TEAM
-	domainVisionStatement = "Equipo Pagos, de la division Fintech bajo el CFO. Responsable del cobro, la retencion, la liberacion, la devolucion y la conciliacion, en el contexto Pagos y Liquidaciones."
+	domainVisionStatement = "Equipo Pagos, de la división Fintech bajo el CFO. Responsable del cobro, la retención, la liberación, la devolución y la conciliación, en el contexto Pagos y Liquidaciones."
 }
 
 BoundedContext EquipoFinanzasYTesoreria {
 	type = TEAM
-	domainVisionStatement = "Equipo Finanzas y Tesoreria bajo el CFO. Responsable de la facturacion a los partners B2B2C, en el contexto Cierre y Facturacion de Siniestros."
+	domainVisionStatement = "Equipo Finanzas y Tesorería bajo el CFO. Responsable de la facturación a los partners B2B2C, en el contexto Cierre y Facturación de Siniestros."
 }
 
 BoundedContext EquipoRiesgoYCumplimiento {
@@ -189,5 +189,5 @@ BoundedContext EquipoRiesgoYCumplimiento {
 
 BoundedContext EquipoWalletYPrestamos {
 	type = TEAM
-	domainVisionStatement = "Equipo Wallet y prestamos, de la division Fintech bajo el CFO. Construye la capacidad naciente de billetera y micropréstamos, correspondiente al dominio TO-BE de Servicios financieros para proveedores."
+	domainVisionStatement = "Equipo Wallet y préstamos, de la división Fintech bajo el CFO. Construye la capacidad naciente de billetera y micropréstamos, correspondiente al dominio TO-BE de Servicios financieros para proveedores."
 }
