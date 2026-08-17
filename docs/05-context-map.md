@@ -26,7 +26,7 @@ El TO-BE parte directamente de los once anti-patrones diagnosticados en el AS-IS
 
 | # | Contexto | Descripción | Equipo dueño |
 |---|---|---|---|
-| 1 | **Marketplace** | Conecta la demanda de hogares con la oferta de proveedores mediante la solicitud y contratación de trabajos, operando como servicio independiente con canal web y móvil asistidos por IA. | Marketplace |
+| 1 | **Marketplace** | Conecta la demanda de hogares con la oferta de proveedores mediante la solicitud y contratación de trabajos, operando como servicio independiente con canal web y móvil. | Marketplace |
 | 2 | **Datos e Inteligencia Artificial** | Proporciona modelos de diagnóstico, priorización y detección de fraude construidos sobre modelos de lectura propios alimentados por eventos, sin acceso al esquema operativo de otros contextos. | Datos e IA |
 | 3 | **Gestión de Trabajos** | Único dueño del ciclo de vida del Trabajo. Publica eventos que desacoplan a los demás contextos sin compartir esquema con nadie. | Workflows |
 | 4 | **Cotizaciones** | Gestiona propuestas de proveedores en su propio modelo, alimentado por eventos del bus, sin llave foránea al esquema del trabajo. | Cotizaciones |
@@ -77,7 +77,7 @@ Los mismos sistemas del AS-IS, pero ninguno entra crudo al dominio. En el TO-BE,
 | **Sistemas de Partner** | Los partners consumen el PL REST de HdA; GestionDeSiniestros y ReglasDePartner tienen ACL de entrada que traduce el payload externo al modelo de dominio |
 | **Sistema de Antecedentes Judiciales** | Integración asíncrona con ACL; elimina la consulta manual que bloqueaba el expediente |
 | **Registro Mercantil** | Integración asíncrona con ACL; elimina la consulta manual en el portal de Cámara de Comercio |
-| **Entidades Certificadoras** | Integración asíncrona asistida por IA con ACL; elimina los bloqueos de 24-48 horas |
+| **Entidades Certificadoras** | Integración asíncrona con ACL; elimina los bloqueos de 24-48 horas |
 | **Pasarela de Pagos** | SDK invocado de forma asíncrona fuera de la transacción de negocio; ACL aísla los códigos de estado de la pasarela del modelo de dominio |
 
 ---
@@ -143,7 +143,7 @@ Cada contexto upstream publica un contrato versionado (Published Language o even
 | Sistemas de Partner | Reglas de Partner | API de onboarding HdA + ACL de entrada |
 | Sistema de Antecedentes Judiciales | Acreditación y Elegibilidad | Integración asíncrona + ACL |
 | Registro Mercantil | Acreditación y Elegibilidad | Integración asíncrona + ACL |
-| Entidades Certificadoras | Acreditación y Elegibilidad | Integración asíncrona asistida por IA + ACL |
+| Entidades Certificadoras | Acreditación y Elegibilidad | Integración asíncrona + ACL |
 | Pasarela de Pagos | Pagos y Liquidaciones | SDK asíncrono fuera de TX + ACL |
 
 ---
@@ -187,7 +187,7 @@ En el TO-BE los 13 Partnerships forzados del AS-IS se eliminan completamente. Ca
 | #1 SK en malla (25 relaciones) | Ownership único + eventos + APIs OHS/PL con ACL | Todos los contextos internos |
 | #2 Siniestro y Trabajo son el mismo objeto | Evento SiniestroListoParaAtencion con ID de correlación propio | OrquestacionDeAtencion → GestionDeTrabajos |
 | #3 Conformist sin ACL (30+ partners) | ACL de entrada + Published Language REST de HdA | GestionDeSiniestros · ReglasDePartner |
-| #4 Integración manual con verificadores (24-48 h) | Integración asíncrona con ACL + asistencia de IA | AcreditacionYElegibilidad |
+| #4 Integración manual con verificadores (24-48 h) | Integración asíncrona con ACL | AcreditacionYElegibilidad |
 | #5 Reglas de partner duplicadas | ReglasDePartner consolidado — único dueño del acuerdo | ReglasDePartner (fusiona ReglasDePartnerParaSiniestros) |
 | #6 Acreditación HdA + homologación partner en el mismo expediente | HomologacionDeProveedores separado de AcreditacionYElegibilidad | HomologacionDeProveedores · AcreditacionYElegibilidad |
 | #7 Analítica sobre base de datos operativa | Modelos de lectura propios alimentados por eventos | DatosEInteligenciaArtificial · ScoringYMicroprestamos |
@@ -206,5 +206,3 @@ cm validate -i models/031-team-map-to-be.cml
 cm generate -i models/03-context-map-to-be.cml  -g context-map -o ./gen
 cm generate -i models/031-team-map-to-be.cml    -g context-map -o ./gen
 ```
-
-> **Nota sobre el modelo multi-archivo:** Los archivos AS-IS y TO-BE declaran los mismos nombres de `BoundedContext`. En un proyecto ContextMapper con todos los archivos en el mismo classpath se generaría un conflicto de nombres duplicados. La solución de producción es factorizar todas las declaraciones de `BoundedContext` a un archivo compartido (ej. `00-bounded-contexts.cml`) y referenciarlos desde los ContextMaps AS-IS y TO-BE. Para los efectos de esta entrega, cada archivo se valida de forma independiente.
