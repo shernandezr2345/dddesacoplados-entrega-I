@@ -1,0 +1,216 @@
+
+ContextMap HogarDeLosAlpesEquiposTosBe {
+	type = ORGANIZATIONAL
+	state = TO_BE
+
+	contains EquipoMarketplace
+	contains EquipoDatosEIA
+	contains EquipoWorkflows
+	contains EquipoCotizaciones
+	contains EquipoAsignacion
+	contains EquipoGestionDeAgentes
+	contains EquipoRegistro
+	contains EquipoAcreditacion
+	contains EquipoReglasDePartner
+	contains EquipoIntegracionesB2B2C
+	contains EquipoCalidadYDisputas
+	contains EquipoPagos
+	contains EquipoSuscripciones
+	contains EquipoWalletYFinanzas
+	contains EquipoPlataforma
+
+	EquipoDatosEIA [U,S]->[D,C] EquipoMarketplace {
+		implementationTechnology = "API REST versionada del modelo de diagnóstico; EquipoMarketplace consume con contrato explícito"
+	}
+
+	EquipoMarketplace [U,S]->[D,C] EquipoWorkflows {
+		implementationTechnology = "Evento SolicitudDeTrabajoCreada en el bus; EquipoWorkflows crea el Trabajo con ACL propia"
+	}
+
+	EquipoWorkflows [U,S]->[D,C] EquipoCotizaciones {
+		implementationTechnology = "Evento SubTrabajoPublicado en el bus; EquipoCotizaciones consume con contrato propio"
+	}
+
+	EquipoWorkflows [U,S]->[D,C] EquipoAsignacion {
+		implementationTechnology = "Evento SubTrabajoListoParaAsignacion en el bus; EquipoAsignacion actúa de forma desacoplada"
+	}
+
+	EquipoWorkflows [U,S]->[D,C] EquipoGestionDeAgentes {
+		implementationTechnology = "Evento ProveedorAsignado en el bus; EquipoGestionDeAgentes toma la responsabilidad de ejecución"
+	}
+
+	EquipoWorkflows [U,S]->[D,C] EquipoPagos {
+		implementationTechnology = "Evento TrabajoCerrado en el bus; EquipoPagos libera el pago de forma eventual e idempotente"
+	}
+
+	EquipoWorkflows [U,S]->[D,C] EquipoCalidadYDisputas {
+		implementationTechnology = "Evento TrabajoCerrado en el bus; EquipoCalidadYDisputas inicia la recolección de calificación"
+	}
+
+	EquipoWorkflows [U,S]->[D,C] EquipoDatosEIA {
+		implementationTechnology = "Feed de eventos de trabajos (creación, transiciones, cierre); EquipoDatosEIA construye modelo de lectura propio"
+	}
+
+	EquipoWorkflows [U,S]->[D,C] EquipoWalletYFinanzas {
+		implementationTechnology = "Feed de eventos de trabajos completados; EquipoWalletYFinanzas construye el historial de scoring del proveedor"
+	}
+
+	EquipoRegistro [U,S]->[D,C] EquipoAsignacion {
+		implementationTechnology = "API pública OHS/PL de perfiles de proveedor; EquipoAsignacion consume con contrato versionado"
+	}
+
+	EquipoAcreditacion [U,S]->[D,C] EquipoAsignacion {
+		implementationTechnology = "API pública OHS/PL de estados de elegibilidad; EquipoAsignacion filtra candidatos con ACL propia"
+	}
+
+	EquipoReglasDePartner [U,S]->[D,C] EquipoAsignacion {
+		implementationTechnology = "API pública OHS/PL de redes permitidas por partner; EquipoAsignacion filtra con contrato versionado"
+	}
+
+	EquipoGestionDeAgentes [U,S]->[D,C] EquipoCotizaciones {
+		implementationTechnology = "Evento NovedadRegistrada en el bus; EquipoCotizaciones inicia recotización con contrato propio"
+	}
+
+	EquipoGestionDeAgentes [U,S]->[D,C] EquipoDatosEIA {
+		implementationTechnology = "Feed de eventos de ejecución; EquipoDatosEIA construye modelo de lectura para priorización"
+	}
+
+	EquipoGestionDeAgentes [U,S]->[D,C] EquipoPagos {
+		implementationTechnology = "Evento EvidenciasCompletas en el bus; EquipoPagos inicia el cierre y facturación del siniestro"
+	}
+
+	EquipoCalidadYDisputas [U,S]->[D,C] EquipoRegistro {
+		implementationTechnology = "Evento CalificacionRegistrada en el bus; EquipoRegistro actualiza reputación del proveedor"
+	}
+
+	EquipoCalidadYDisputas [U,S]->[D,C] EquipoDatosEIA {
+		implementationTechnology = "Feed de eventos de calidad y disputas; EquipoDatosEIA construye modelo analítico propio"
+	}
+
+	EquipoPagos [U,S]->[D,C] EquipoDatosEIA {
+		implementationTechnology = "Feed de eventos de pagos; EquipoDatosEIA construye modelo de lectura para detección de fraude"
+	}
+
+	EquipoPagos [U,S]->[D,C] EquipoWalletYFinanzas {
+		implementationTechnology = "Evento LiquidacionCompletada en el bus; EquipoWalletYFinanzas acredita fondos de forma eventual"
+	}
+
+	EquipoIntegracionesB2B2C [U,S]->[D,C] EquipoIntegracionesB2B2C {
+		implementationTechnology = "API OHS/PL de coberturas (GestionDePolizasYCoberturas) consumida con ACL por GestionDeSiniestros; relación intra-equipo con contrato explícito"
+	}
+
+	EquipoIntegracionesB2B2C [U,S]->[D,C] EquipoWorkflows {
+		implementationTechnology = "Evento SiniestroListoParaAtencion en el bus con ID de correlación propio; EquipoWorkflows crea el Trabajo con ACL"
+	}
+
+	EquipoReglasDePartner [U,S]->[D,C] EquipoIntegracionesB2B2C {
+		implementationTechnology = "API OHS/PL de reglas del partner; EquipoIntegracionesB2B2C consume con contrato versionado"
+	}
+
+	EquipoAcreditacion [U,S]->[D,C] EquipoIntegracionesB2B2C {
+		implementationTechnology = "API OHS/PL de proveedores homologados; EquipoIntegracionesB2B2C consulta la red autorizada con contrato versionado"
+	}
+
+	EquipoRegistro [U,S]->[D,C] EquipoAcreditacion {
+		implementationTechnology = "API OHS/PL de perfil de proveedor; EquipoAcreditacion verifica existencia del proveedor con contrato versionado"
+	}
+
+	EquipoSuscripciones [U,S]->[D,C] EquipoWorkflows {
+		implementationTechnology = "Evento ServicioPeriodicoListo en el bus; EquipoWorkflows crea el Trabajo recurrente con ACL"
+	}
+
+	EquipoRegistro [U,S]->[D,C] EquipoWalletYFinanzas {
+		implementationTechnology = "API OHS/PL de proveedor verificado; EquipoWalletYFinanzas activa la wallet cuando el proveedor supera el umbral de onboarding"
+	}
+
+	EquipoPlataforma [U,S]->[D,C] EquipoWorkflows {
+		implementationTechnology = "SDK de infraestructura: bus de eventos, identidad, notificaciones y trazabilidad distribuida"
+	}
+
+	EquipoPlataforma [U,S]->[D,C] EquipoRegistro {
+		implementationTechnology = "SDK de infraestructura: identidad del proveedor, notificaciones y seguridad"
+	}
+
+	EquipoPlataforma [U,S]->[D,C] EquipoIntegracionesB2B2C {
+		implementationTechnology = "SDK de infraestructura: credenciales de partners, bus de eventos y trazabilidad"
+	}
+
+	EquipoPlataforma [U,S]->[D,C] EquipoMarketplace {
+		implementationTechnology = "SDK de infraestructura: identidad del cliente, notificaciones y canal web/móvil"
+	}
+}
+
+BoundedContext EquipoMarketplace {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de Marketplace. Responsable del canal B2C y de la experiencia de solicitud de servicio asistida por IA."
+}
+
+BoundedContext EquipoDatosEIA {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de DatosEInteligenciaArtificial. Responsable de los modelos analíticos, de diagnóstico y de detección de fraude, construidos sobre modelos de lectura propios alimentados por eventos."
+}
+
+BoundedContext EquipoWorkflows {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de GestionDeTrabajos. �snico propietario del ciclo de vida del Trabajo; publica los eventos que desacoplan al resto de los equipos."
+}
+
+BoundedContext EquipoCotizaciones {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de Cotizaciones. Gestiona propuestas de proveedores en su propio contexto, desacoplado del esquema del Trabajo."
+}
+
+BoundedContext EquipoAsignacion {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de Asignacion. Determina y publica la asignación de proveedores consultando APIs de tres equipos proveedores (Registro, Acreditacion, ReglasDePartner)."
+}
+
+BoundedContext EquipoGestionDeAgentes {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de GestionDeEjecucion y GestionDeEvidencias. Modela los agentes como actores explícitos del dominio y gestiona el ciclo de ejecución y evidencias de forma desacoplada."
+}
+
+BoundedContext EquipoRegistro {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de GestionDeProveedores. Publica la red de profesionales y empresas mediante API pública OHS/PL y actualiza la reputación a partir de eventos de calidad."
+}
+
+BoundedContext EquipoAcreditacion {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de AcreditacionYElegibilidad y HomologacionDeProveedores. Mantiene separados la confianza interna de HdA (acreditación) y la autorización específica de cada partner (homologación)."
+}
+
+BoundedContext EquipoReglasDePartner {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de ReglasDePartner (consolidado). �snico propietario del modelo de acuerdo comercial para todos los partners; elimina la duplicación AS-IS entre reglas generales y reglas de siniestros."
+}
+
+BoundedContext EquipoIntegracionesB2B2C {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de GestionDeSiniestros, GestionDePolizasYCoberturas, EvaluacionYAprobacionDeSiniestros y OrquestacionDeAtencionDelSiniestro. Gestiona el ciclo completo del siniestro hasta publicar el evento que activa GestionDeTrabajos."
+}
+
+BoundedContext EquipoCalidadYDisputas {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de CalidadGarantiasYDisputas. Gestiona calificaciones, garantías y disputas publicando eventos de reputación al bus."
+}
+
+BoundedContext EquipoPagos {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de PagosYLiquidaciones y CierreYFacturacionDeSiniestros. Opera con consistencia eventual; ninguna de sus operaciones comparte transacción con GestionDeTrabajos."
+}
+
+BoundedContext EquipoSuscripciones {
+	type = TEAM
+	domainVisionStatement = "Equipo nuevo. Dueño de Suscripciones, PlanificacionRecurrente y GestionDeServiciosPeriodicos. Gestiona el nuevo dominio de servicios recurrentes y publica eventos que GestionDeTrabajos consume."
+}
+
+BoundedContext EquipoWalletYFinanzas {
+	type = TEAM
+	domainVisionStatement = "Equipo dueño de WalletDeProveedores, ServiciosFinancierosYPagos y ScoringYMicroprestamos. Construye el nuevo dominio financiero para proveedores a partir de eventos de trabajos y liquidaciones."
+}
+
+BoundedContext EquipoPlataforma {
+	type = TEAM
+	domainVisionStatement = "Equipo de infraestructura horizontal. Proporciona el bus de eventos, identidad, notificaciones y trazabilidad distribuida como SDK compartido sin compartir lógica de negocio."
+}

@@ -1,0 +1,833 @@
+
+ContextMap HogarDeLosAlpesToBe {
+	type = SYSTEM_LANDSCAPE
+	state = TO_BE
+
+	contains Marketplace
+	contains DatosEInteligenciaArtificial
+	contains GestionDeTrabajos
+	contains Cotizaciones
+	contains Asignacion
+	contains GestionDeEjecucion
+	contains GestionDeProveedores
+	contains AcreditacionYElegibilidad
+	contains ReglasDePartner
+	contains CalidadGarantiasYDisputas
+	contains PagosYLiquidaciones
+	contains GestionDeSiniestros
+	contains GestionDePolizasYCoberturas
+	contains EvaluacionYAprobacionDeSiniestros
+	contains OrquestacionDeAtencionDelSiniestro
+	contains HomologacionDeProveedores
+	contains GestionDeEvidencias
+	contains CierreYFacturacionDeSiniestros
+	contains Suscripciones
+	contains PlanificacionRecurrente
+	contains GestionDeServiciosPeriodicos
+	contains WalletDeProveedores
+	contains ServiciosFinancierosYPagos
+	contains ScoringYMicroprestamos
+	contains SistemasDePartner
+	contains SistemaDeAntecedentesJudiciales
+	contains RegistroMercantil
+	contains EntidadesCertificadoras
+	contains PasarelaDePagos
+
+	DatosEInteligenciaArtificial [U,OHS,PL]->[D,ACL] Marketplace {
+		implementationTechnology = "API REST versionada del modelo de diagnóstico; Marketplace protege su modelo de solicitud con ACL contra cambios en el modelo de IA"
+		exposedAggregates = ModelosDeDiagnostico
+	}
+
+	Marketplace [U,OHS]->[D,ACL] GestionDeTrabajos {
+		implementationTechnology = "Evento SolicitudDeTrabajoCreada publicado en el bus de eventos; GestionDeTrabajos traduce la solicitud con ACL y crea el Trabajo con su propio modelo"
+		exposedAggregates = SolicitudesDeServicio
+	}
+
+	GestionDeTrabajos [U,OHS]->[D,ACL] Cotizaciones {
+		implementationTechnology = "Evento SubTrabajoPublicado en el bus; Cotizaciones gestiona propuestas en su propio modelo sin llave foránea al esquema del trabajo"
+		exposedAggregates = Trabajos
+	}
+
+	GestionDeTrabajos [U,OHS]->[D,ACL] Asignacion {
+		implementationTechnology = "Evento SubTrabajoListoParaAsignacion en el bus; Asignacion inicia la búsqueda de candidatos de forma desacoplada"
+		exposedAggregates = Trabajos
+	}
+
+	GestionDeTrabajos [U,OHS]->[D,ACL] GestionDeEjecucion {
+		implementationTechnology = "Evento ProveedorAsignado en el bus; GestionDeEjecucion toma la responsabilidad de seguimiento con su propio modelo"
+		exposedAggregates = Trabajos
+	}
+
+	GestionDeTrabajos [U,OHS]->[D,ACL] PagosYLiquidaciones {
+		implementationTechnology = "Evento TrabajoCerrado en el bus; PagosYLiquidaciones libera el pago de forma eventual e idempotente sin transacción distribuida"
+		exposedAggregates = Trabajos
+	}
+
+	GestionDeTrabajos [U,OHS]->[D,ACL] CalidadGarantiasYDisputas {
+		implementationTechnology = "Evento TrabajoCerrado en el bus; CalidadGarantiasYDisputas inicia la recolección de calificación de forma independiente"
+		exposedAggregates = Trabajos
+	}
+
+	GestionDeTrabajos [U,OHS]->[D,ACL] DatosEInteligenciaArtificial {
+		implementationTechnology = "Feed de eventos de trabajos hacia la plataforma de datos; DatosEIA construye su propio modelo de lectura analítico sin acceso al esquema operativo"
+		exposedAggregates = Trabajos
+	}
+
+	GestionDeEjecucion [U,OHS]->[D,ACL] Cotizaciones {
+		implementationTechnology = "Evento NovedadRegistrada en el bus; Cotizaciones inicia recotización en su propio modelo sin escritura directa al registro del trabajo"
+		exposedAggregates = Ejecuciones
+	}
+
+	GestionDeEjecucion [U,OHS]->[D,ACL] DatosEInteligenciaArtificial {
+		implementationTechnology = "Feed de eventos de ejecución; DatosEIA construye modelo de lectura propio para priorización y automatización"
+		exposedAggregates = Ejecuciones
+	}
+
+	GestionDeProveedores [U,OHS,PL]->[D,ACL] Asignacion {
+		implementationTechnology = "API pública versionada de perfiles de proveedor; Asignacion mantiene su propio modelo de candidatos sin JOIN al esquema de proveedores"
+		exposedAggregates = PerfilesDeProveedor
+	}
+
+	AcreditacionYElegibilidad [U,OHS,PL]->[D,ACL] Asignacion {
+		implementationTechnology = "API pública de estados de elegibilidad; Asignacion consulta la acreditación sin acceder al expediente de verificación"
+		exposedAggregates = EstadosDeAcreditacion
+	}
+
+	ReglasDePartner [U,OHS,PL]->[D,ACL] Asignacion {
+		implementationTechnology = "API de red de proveedores permitida por partner; Asignacion filtra candidatos con ACL sin embeber reglas en su propia lógica"
+		exposedAggregates = RedesPermitidas
+	}
+
+	CalidadGarantiasYDisputas [U,OHS]->[D,ACL] GestionDeProveedores {
+		implementationTechnology = "Evento CalificacionRegistrada en el bus; GestionDeProveedores actualiza la reputación en su propio agregado sin trigger sobre su tabla"
+		exposedAggregates = Calificaciones
+	}
+
+	CalidadGarantiasYDisputas [U,OHS]->[D,ACL] DatosEInteligenciaArtificial {
+		implementationTechnology = "Feed de eventos de calidad y disputas; DatosEIA construye modelo analítico propio"
+		exposedAggregates = Calificaciones
+	}
+
+	PagosYLiquidaciones [U,OHS]->[D,ACL] DatosEInteligenciaArtificial {
+		implementationTechnology = "Feed de eventos de pagos; DatosEIA construye modelo de lectura propio para detección de fraude sin acceso al esquema de pagos"
+		exposedAggregates = TransaccionesDePago
+	}
+
+	SistemasDePartner [U]->[D,ACL] GestionDeSiniestros {
+		implementationTechnology = "Los partners publican siniestros mediante el Published Language REST de HdA; GestionDeSiniestros protege su modelo con ACL que traduce y valida el payload externo"
+	}
+
+	SistemasDePartner [U]->[D,ACL] ReglasDePartner {
+		implementationTechnology = "Los partners configuran reglas mediante la API de onboarding de HdA; ReglasDePartner tiene ACL y es el único dueño del modelo de acuerdo comercial"
+	}
+
+	GestionDePolizasYCoberturas [U,OHS,PL]->[D,ACL] GestionDeSiniestros {
+		implementationTechnology = "API pública de coberturas; GestionDeSiniestros consulta la cobertura aplicable con ACL sin compartir el esquema de pólizas"
+		exposedAggregates = Coberturas
+	}
+
+	GestionDeSiniestros [U,OHS]->[D,ACL] EvaluacionYAprobacionDeSiniestros {
+		implementationTechnology = "Evento SiniestroRegistrado en el bus; EvaluacionYAprobacion inicia el proceso con su propio modelo"
+		exposedAggregates = Siniestros
+	}
+
+	EvaluacionYAprobacionDeSiniestros [U,OHS]->[D,ACL] OrquestacionDeAtencionDelSiniestro {
+		implementationTechnology = "Evento SiniestroAprobado en el bus; OrquestacionDeAtencion toma el control sin compartir el registro de evaluación"
+		exposedAggregates = DecisionesDeAprobacion
+	}
+
+	ReglasDePartner [U,OHS,PL]->[D,ACL] OrquestacionDeAtencionDelSiniestro {
+		implementationTechnology = "API de reglas del partner (SLA, montos, pasos); OrquestacionDeAtencion consulta con ACL sin embeber reglas en el flujo de atención"
+		exposedAggregates = AcuerdosDePartner
+	}
+
+	HomologacionDeProveedores [U,OHS,PL]->[D,ACL] OrquestacionDeAtencionDelSiniestro {
+		implementationTechnology = "API de red homologada por partner; OrquestacionDeAtencion consulta los proveedores autorizados con ACL propio"
+		exposedAggregates = ProveedoresHomologados
+	}
+
+	GestionDeProveedores [U,OHS,PL]->[D,ACL] HomologacionDeProveedores {
+		implementationTechnology = "API de perfil de proveedor; HomologacionDeProveedores verifica existencia y datos base sin acceder al expediente de acreditación de HdA"
+		exposedAggregates = PerfilesDeProveedor
+	}
+
+	OrquestacionDeAtencionDelSiniestro [U,OHS]->[D,ACL] GestionDeTrabajos {
+		implementationTechnology = "Evento SiniestroListoParaAtencion en el bus con ID de correlación propio; GestionDeTrabajos crea el Trabajo sin arrastrar el identificador externo del partner"
+		exposedAggregates = SiniestrosAprobados
+	}
+
+	GestionDeEjecucion [U,OHS]->[D,ACL] GestionDeEvidencias {
+		implementationTechnology = "Evento HitoDeEjecucionRegistrado en el bus; GestionDeEvidencias recopila evidencias en su propio contexto sin compartir el servidor de archivos"
+		exposedAggregates = Ejecuciones
+	}
+
+	GestionDeEvidencias [U,OHS]->[D,ACL] CierreYFacturacionDeSiniestros {
+		implementationTechnology = "Evento EvidenciasCompletas en el bus; CierreYFacturacion inicia el cierre sin acceder directamente al repositorio de evidencias"
+		exposedAggregates = PaquetesDeEvidencia
+	}
+
+	CierreYFacturacionDeSiniestros [U,OHS]->[D,ACL] PagosYLiquidaciones {
+		implementationTechnology = "Evento CierreDeSiniestroGenerado en el bus con ítems facturables; PagosYLiquidaciones procesa la liquidación al partner de forma eventual"
+		exposedAggregates = FacturasAPartner
+	}
+
+	Suscripciones [U,OHS]->[D,ACL] PlanificacionRecurrente {
+		implementationTechnology = "Evento SuscripcionActivada en el bus; PlanificacionRecurrente genera el calendario sin compartir el modelo de suscripción"
+		exposedAggregates = ContratosDeServicioRecurrente
+	}
+
+	PlanificacionRecurrente [U,OHS]->[D,ACL] GestionDeServiciosPeriodicos {
+		implementationTechnology = "Evento ServicioProgramado en el bus; GestionDeServiciosPeriodicos ejecuta cada ocurrencia con su propio modelo"
+		exposedAggregates = CalendariosDeServicio
+	}
+
+	GestionDeServiciosPeriodicos [U,OHS]->[D,ACL] GestionDeTrabajos {
+		implementationTechnology = "Evento ServicioPeriodicoListo en el bus; GestionDeTrabajos crea el Trabajo recurrente con su modelo sin acoplamiento al contexto de suscripción"
+		exposedAggregates = EjecucionesDeServicio
+	}
+
+	GestionDeTrabajos [U,OHS]->[D,ACL] ScoringYMicroprestamos {
+		implementationTechnology = "Feed de eventos de trabajos completados; ScoringYMicroprestamos construye el historial operacional del proveedor de forma asíncrona"
+		exposedAggregates = Trabajos
+	}
+
+	GestionDeProveedores [U,OHS,PL]->[D,ACL] WalletDeProveedores {
+		implementationTechnology = "API de proveedor verificado; WalletDeProveedores activa la wallet cuando el proveedor supera el umbral de onboarding"
+		exposedAggregates = PerfilesDeProveedor
+	}
+
+	PagosYLiquidaciones [U,OHS]->[D,ACL] WalletDeProveedores {
+		implementationTechnology = "Evento LiquidacionCompletada en el bus; WalletDeProveedores acredita fondos en la wallet del proveedor de forma eventual"
+		exposedAggregates = TransaccionesDePago
+	}
+
+	WalletDeProveedores [U,OHS]->[D,ACL] ServiciosFinancierosYPagos {
+		implementationTechnology = "API de wallet con contrato versionado; ServiciosFinancierosYPagos opera sobre el balance disponible con ACL propio"
+		exposedAggregates = Wallets
+	}
+
+	ScoringYMicroprestamos [U,OHS]->[D,ACL] ServiciosFinancierosYPagos {
+		implementationTechnology = "API de scoring del proveedor; ServiciosFinancierosYPagos consulta el score para habilitar productos financieros"
+		exposedAggregates = ScoresDeProveedores
+	}
+
+	SistemaDeAntecedentesJudiciales [U]->[D,ACL] AcreditacionYElegibilidad {
+		implementationTechnology = "Integración asíncrona con el portal de la Policía Nacional; ACL traduce el resultado al modelo del expediente de HdA sin bloquear el flujo de verificación"
+	}
+
+	RegistroMercantil [U]->[D,ACL] AcreditacionYElegibilidad {
+		implementationTechnology = "Integración asíncrona con el RUES de la Cámara de Comercio; ACL transforma el certificado mercantil al modelo legal de HdA"
+	}
+
+	EntidadesCertificadoras [U]->[D,ACL] AcreditacionYElegibilidad {
+		implementationTechnology = "Integración asíncrona asistida por IA con entidades certificadoras; ACL traduce vigencia de títulos y matrículas al modelo de acreditación de HdA"
+	}
+
+	PasarelaDePagos [U]->[D,ACL] PagosYLiquidaciones {
+		implementationTechnology = "SDK de pasarela invocado de forma asíncrona fuera de la transacción de negocio; ACL aísla los códigos de estado de la pasarela del modelo de dominio de pagos"
+	}
+}
+
+BoundedContext Marketplace {
+	type = FEATURE
+	domainVisionStatement = "Conecta la demanda de los hogares con la oferta de proveedores mediante la solicitud y contratación de trabajos, operando como servicio independiente con canales web y móvil asistidos por IA."
+	implementationTechnology = "Servicio independiente con base de datos propia; consume API OHS de DatosEIA y publica eventos al bus"
+	responsibilities = "Recibir la solicitud del hogar asistida por el modelo de diagnóstico", "Presentar cotizaciones comparables al cliente", "Registrar la selección del proveedor", "Publicar evento SolicitudDeTrabajoCreada"
+
+	Aggregate SolicitudesDeServicio {
+		Entity SolicitudDeServicio {
+			aggregateRoot
+			String solicitudId
+			String canal
+			String clienteId
+			String categoria
+			String urgencia
+			String ciudad
+			String zona
+			String direccion
+			String estadoSolicitud
+			Date fechaCreacion
+		}
+	}
+}
+
+BoundedContext DatosEInteligenciaArtificial {
+	type = FEATURE
+	domainVisionStatement = "Proporciona capacidades de datos e inteligencia artificial mediante modelos propios alimentados por eventos, exponiéndolos con Published Language propio sin acceso directo al esquema operativo de otros contextos."
+	implementationTechnology = "Plataforma de datos con pipeline de eventos; modelos servidos como API REST versionada (OHS/PL)"
+	responsibilities = "Construir modelos de diagnóstico a partir de eventos de solicitudes", "Detectar señales de fraude sobre modelo de lectura propio", "Priorizar casos mediante scoring analítico", "Exponer API de diagnóstico para Marketplace"
+
+	Aggregate ModelosDeDiagnostico {
+		Entity ModeloDeDiagnostico {
+			aggregateRoot
+			String modeloId
+			String referenciaSolicitudId
+			String categoriaSugerida
+			String urgenciaSugerida
+			double confianza
+			Date fechaDiagnostico
+		}
+	}
+
+	Aggregate SenalesAnaliticas {
+		Entity SenalAnalitica {
+			aggregateRoot
+			String senalId
+			String tipoSenal
+			String entidadReferida
+			String identificadorReferido
+			double puntaje
+			Date fechaCalculo
+		}
+	}
+}
+
+BoundedContext GestionDeTrabajos {
+	type = FEATURE
+	domainVisionStatement = "Gestiona el ciclo de vida del Trabajo desde su creación hasta su ejecución y cierre, como único dueño del agregado Trabajo. Publica eventos para que los demás contextos actúen de forma desacoplada."
+	implementationTechnology = "Servicio independiente con base de datos propia; expone API REST OHS y publica eventos al bus de eventos"
+	responsibilities = "Crear y descomponer el Trabajo en sub-trabajos", "Gestionar transiciones de estado del Trabajo", "Registrar novedades y publicar eventos de recotización y reasignación", "Garantizar la consistencia del ciclo de vida del Trabajo"
+
+	Aggregate Trabajos {
+		Entity Trabajo {
+			aggregateRoot
+			String trabajoId
+			String origen
+			String categoria
+			String urgencia
+			String estadoTrabajo
+			String clienteId
+			String partnerId
+			String correlacionExternaId
+			String ciudad
+			String zona
+			double costoTotal
+			Date fechaCreacion
+			Date fechaCierre
+			- List<SubTrabajo> subTrabajos
+		}
+		Entity SubTrabajo {
+			String subTrabajoId
+			String categoria
+			String estadoSubTrabajo
+			String proveedorAsignadoId
+			double costoAcordado
+			boolean bloqueante
+		}
+	}
+}
+
+BoundedContext Cotizaciones {
+	type = FEATURE
+	domainVisionStatement = "Gestiona la solicitud, recepción, evaluación y selección de cotizaciones asociadas a un Trabajo, operando con modelo de datos propio alimentado por eventos del bus."
+	implementationTechnology = "Servicio independiente con base de datos propia; consume eventos del bus y expone API REST para consulta"
+	responsibilities = "Registrar y versionar cotizaciones por sub-trabajo", "Tramitar solicitudes de información adicional y visitas al predio", "Publicar evento CotizacionAceptada", "Reiniciar cotización ante novedad sin escritura directa al trabajo"
+
+	Aggregate PropuestasDeCotizacion {
+		Entity Cotizacion {
+			aggregateRoot
+			String cotizacionId
+			String referenciaSubTrabajoId
+			String proveedorId
+			int version
+			double monto
+			String moneda
+			String estadoCotizacion
+			Date vigenciaHasta
+			boolean requiereVisita
+		}
+	}
+}
+
+BoundedContext Asignacion {
+	type = FEATURE
+	domainVisionStatement = "Determina los proveedores candidatos y la asignación de trabajos consultando APIs desacopladas de proveedores, elegibilidad y reglas de partner, con su propio modelo de candidatos."
+	implementationTechnology = "Servicio independiente con base de datos propia; consume eventos del bus; consulta APIs de GestionDeProveedores, AcreditacionYElegibilidad y ReglasDePartner"
+	responsibilities = "Identificar y ordenar proveedores candidatos", "Registrar la asignación del proveedor", "Publicar evento ProveedorAsignado", "Reabrir la búsqueda ante una reasignación"
+
+	Aggregate Publicaciones {
+		Entity Publicacion {
+			aggregateRoot
+			String publicacionId
+			String referenciaSubTrabajoId
+			String categoria
+			String ciudad
+			String zona
+			Date fechaPublicacion
+			String estadoPublicacion
+			- List<ProveedorCandidato> candidatos
+		}
+		Entity ProveedorCandidato {
+			String candidatoId
+			String proveedorId
+			double puntajeAfinidad
+			boolean acreditado
+			boolean homologadoParaPartner
+			boolean disponible
+			double reputacion
+		}
+	}
+}
+
+BoundedContext GestionDeEjecucion {
+	type = FEATURE
+	domainVisionStatement = "Coordina la ejecución y el seguimiento de los trabajos en su propio contexto, modelando los agentes de gestión como actores explícitos del dominio, sin acceso directo al esquema del Trabajo."
+	implementationTechnology = "Servicio independiente con base de datos propia; consume eventos del bus; expone API para la consola de agentes"
+	responsibilities = "Coordinar la ejecución entre proveedores y agentes de gestión", "Registrar hitos y novedades del trabajo", "Publicar evento NovedadRegistrada para disparar recotización o reasignación", "Orquestar compensaciones ante cambios de alcance"
+
+	Aggregate Ejecuciones {
+		Entity Ejecucion {
+			aggregateRoot
+			String ejecucionId
+			String referenciaTrabajoId
+			String proveedorId
+			String agenteDuenoId
+			String estadoEjecucion
+			Date fechaInicio
+			Date fechaCierre
+			- List<Hito> hitos
+		}
+		Entity Hito {
+			String hitoId
+			String descripcion
+			Date fechaRegistro
+			boolean exigeRecotizacion
+			boolean exigeReasignacion
+		}
+	}
+}
+
+BoundedContext GestionDeProveedores {
+	type = FEATURE
+	domainVisionStatement = "Administra la red de profesionales y empresas, sus servicios, cobertura, disponibilidad y reputación, exponiéndolos mediante Published Language propio como API pública."
+	implementationTechnology = "Servicio independiente con base de datos propia; expone API REST OHS/PL; consume evento CalificacionRegistrada del bus"
+	responsibilities = "Gestionar el perfil operacional del proveedor", "Actualizar reputación a partir de eventos de calidad sin trigger sobre su tabla", "Exponer API pública de disponibilidad y cobertura", "Publicar evento ProveedorVerificado"
+
+	Aggregate PerfilesDeProveedor {
+		Entity PerfilDeProveedor {
+			aggregateRoot
+			String proveedorId
+			String tipoProveedor
+			- List<String> serviciosDeclarados
+			- List<String> ciudadesCobertura
+			- List<String> zonasCobertura
+			boolean disponible
+			double reputacion
+		}
+	}
+}
+
+BoundedContext AcreditacionYElegibilidad {
+	type = FEATURE
+	domainVisionStatement = "Gestiona la verificación, acreditación y elegibilidad de proveedores según los criterios internos de HdA, separado del perfil operacional y de las homologaciones de cada partner."
+	implementationTechnology = "Servicio independiente con base de datos propia; integraciones asíncronas con ACL hacia sistemas externos; expone API REST OHS/PL"
+	responsibilities = "Gestionar el expediente de verificación del proveedor", "Integrar asíncronamente con Policía, Registro Mercantil y certificadoras mediante ACL", "Publicar estado de elegibilidad mediante API pública", "Publicar evento AcreditacionActualizada"
+
+	Aggregate EstadosDeAcreditacion {
+		Entity EstadoDeAcreditacion {
+			aggregateRoot
+			String proveedorId
+			String estadoAcreditacion
+			- List<VerificacionExterna> verificaciones
+			Date ultimaActualizacion
+		}
+		Entity VerificacionExterna {
+			String verificacionId
+			String fuenteExterna
+			String resultado
+			Date fechaConsulta
+			Date fechaVigencia
+		}
+	}
+}
+
+BoundedContext ReglasDePartner {
+	type = FEATURE
+	domainVisionStatement = "Gestiona las particularidades comerciales y operativas de todos los partners como único dueño, consolidando las reglas generales y las de siniestros que estaban duplicadas en el AS-IS."
+	implementationTechnology = "Servicio independiente con base de datos propia; expone API REST OHS/PL para Asignacion, OrquestacionDeAtencionDelSiniestro y otros consumidores; ACL de entrada para onboarding de partners"
+	responsibilities = "Gestionar el acuerdo comercial de cada partner", "Publicar la red de proveedores permitida por partner", "Definir SLA, montos máximos y pasos de aprobación", "Consolidar reglas generales y reglas de siniestros en un único modelo"
+
+	Aggregate AcuerdosDePartner {
+		Entity AcuerdoDePartner {
+			aggregateRoot
+			String partnerId
+			String tipoPartner
+			int slaHoras
+			double montoMaximo
+			String moneda
+			- List<PasoDeAprobacion> pasos
+		}
+		Entity PasoDeAprobacion {
+			String pasoId
+			String descripcion
+			String actor
+			boolean requerido
+		}
+	}
+
+	Aggregate RedesPermitidas {
+		Entity RedPermitida {
+			aggregateRoot
+			String redId
+			String partnerId
+			String categoria
+			- List<String> proveedoresPermitidosIds
+		}
+	}
+}
+
+BoundedContext CalidadGarantiasYDisputas {
+	type = FEATURE
+	domainVisionStatement = "Gestiona calificaciones, reclamaciones, garantías, disputas y compensaciones en su propio contexto, publicando eventos de reputación para que GestionDeProveedores actualice su modelo."
+	implementationTechnology = "Servicio independiente con base de datos propia; consume eventos del bus; expone API para resolución de disputas"
+	responsibilities = "Recoger calificaciones de clientes tras el cierre", "Gestionar disputas y garantías en su propio modelo", "Publicar evento CalificacionRegistrada al bus", "Coordinar compensaciones sin acceder al esquema del Trabajo"
+
+	Aggregate Calificaciones {
+		Entity Calificacion {
+			aggregateRoot
+			String calificacionId
+			String referenciaTrabajoId
+			String proveedorId
+			String clienteId
+			int puntaje
+			String comentario
+			Date fechaCalificacion
+		}
+	}
+
+	Aggregate Disputas {
+		Entity Disputa {
+			aggregateRoot
+			String disputaId
+			String referenciaTrabajoId
+			String motivoDisputa
+			String estadoDisputa
+			double montoCompensacion
+			Date fechaApertura
+			Date fechaCierre
+		}
+	}
+}
+
+BoundedContext PagosYLiquidaciones {
+	type = FEATURE
+	domainVisionStatement = "Gestiona los pagos y liquidaciones mediante consistencia eventual, sin transacciones distribuidas con el motor de trabajo, integrando la pasarela de forma asíncrona con ACL."
+	implementationTechnology = "Servicio independiente con base de datos propia; consume eventos del bus; SDK de pasarela invocado asíncronamente fuera de la transacción de negocio"
+	responsibilities = "Retener y liberar pagos de forma idempotente y eventual", "Liquidar a proveedores", "Integrar la pasarela de pagos con ACL asíncrona", "Publicar evento LiquidacionCompletada"
+
+	Aggregate TransaccionesDePago {
+		Entity TransaccionDePago {
+			aggregateRoot
+			String transaccionId
+			String referenciaTrabajoId
+			String proveedorId
+			String clienteId
+			double monto
+			String moneda
+			String estadoTransaccion
+			String idempotencyKey
+			Date fechaTransaccion
+		}
+	}
+}
+
+BoundedContext GestionDeSiniestros {
+	type = FEATURE
+	domainVisionStatement = "Gestiona el ciclo de vida del siniestro desde su recepción hasta su derivación a la atención, con ACL que protege el modelo de dominio de HdA de los formatos externos de los partners."
+	implementationTechnology = "Servicio independiente con base de datos propia; ACL de entrada que traduce el Published Language de HdA al agregado Siniestro; publica eventos al bus"
+	responsibilities = "Recibir y validar siniestros de partners con ACL", "Gestionar el estado del siniestro", "Verificar cobertura vía API de GestionDePolizasYCoberturas", "Publicar evento SiniestroRegistrado"
+
+	Aggregate Siniestros {
+		Entity Siniestro {
+			aggregateRoot
+			String siniestroId
+			String partnerId
+			String aseguradoId
+			String correlacionPartnerId
+			String estadoSiniestro
+			String categoria
+			String ciudad
+			String zona
+			Date fechaReporte
+		}
+	}
+}
+
+BoundedContext GestionDePolizasYCoberturas {
+	type = FEATURE
+	domainVisionStatement = "Determina las condiciones de cobertura aplicables a siniestros y las restricciones que deben considerarse antes de autorizar su atención, exponiéndolas mediante API pública."
+	implementationTechnology = "Servicio independiente con base de datos propia; expone API REST OHS/PL para GestionDeSiniestros"
+	responsibilities = "Gestionar pólizas de partners y asegurados", "Determinar cobertura aplicable a un siniestro dado", "Validar vigencia y condiciones de la póliza", "Exponer API pública de coberturas"
+
+	Aggregate Coberturas {
+		Entity Cobertura {
+			aggregateRoot
+			String coberturaId
+			String polizaId
+			String partnerId
+			String aseguradoId
+			String categoria
+			double montoMaximoCubierto
+			Date vigenciaDesde
+			Date vigenciaHasta
+			boolean activa
+		}
+	}
+}
+
+BoundedContext EvaluacionYAprobacionDeSiniestros {
+	type = FEATURE
+	domainVisionStatement = "Gestiona la evaluación previa y las decisiones de aprobación para iniciar la atención del siniestro, operando con su propio modelo de decisiones alimentado por eventos."
+	implementationTechnology = "Servicio independiente con base de datos propia; consume evento SiniestroRegistrado del bus; publica eventos SiniestroAprobado o SiniestroRechazado"
+	responsibilities = "Evaluar siniestros recibidos vía evento", "Gestionar el proceso de aprobación con la aseguradora", "Publicar evento SiniestroAprobado o SiniestroRechazado"
+
+	Aggregate DecisionesDeAprobacion {
+		Entity DecisionDeAprobacion {
+			aggregateRoot
+			String decisionId
+			String referenciaSiniestroId
+			String estadoDecision
+			String evaluadorId
+			String motivoRechazo
+			Date fechaDecision
+		}
+	}
+}
+
+BoundedContext OrquestacionDeAtencionDelSiniestro {
+	type = FEATURE
+	domainVisionStatement = "Coordina la transformación del siniestro aprobado en un Trabajo publicando un evento con ID de correlación propio, desacoplando completamente el dominio de siniestros del dominio de trabajos."
+	implementationTechnology = "Servicio independiente con base de datos propia; consume evento SiniestroAprobado; consulta APIs de ReglasDePartner y HomologacionDeProveedores; publica evento SiniestroListoParaAtencion"
+	responsibilities = "Orquestar la transformación del siniestro en Trabajo con ID de correlación propio", "Aplicar reglas del partner con ACL", "Consultar red homologada con ACL", "Publicar evento SiniestroListoParaAtencion al bus"
+
+	Aggregate SiniestrosAprobados {
+		Entity SiniestroAprobado {
+			aggregateRoot
+			String orquestacionId
+			String referenciaSiniestroId
+			String correlacionId
+			String partnerId
+			String categoria
+			String proveedorSugeridoId
+			double montoAutorizado
+			Date fechaOrquestacion
+		}
+	}
+}
+
+BoundedContext HomologacionDeProveedores {
+	type = FEATURE
+	domainVisionStatement = "Determina qué proveedores están autorizados por cada partner para la atención de siniestros, separado de la acreditación interna de HdA y con su propio modelo de autorizaciones."
+	implementationTechnology = "Servicio independiente con base de datos propia; consulta API de GestionDeProveedores; expone API REST OHS/PL para OrquestacionDeAtencionDelSiniestro"
+	responsibilities = "Gestionar la red de proveedores homologados por cada partner", "Verificar existencia del proveedor en HdA vía API (no el expediente de acreditación)", "Exponer API de proveedores autorizados para un siniestro dado"
+
+	Aggregate ProveedoresHomologados {
+		Entity ProveedorHomologado {
+			aggregateRoot
+			String homologacionId
+			String partnerId
+			String proveedorId
+			String categoria
+			boolean activo
+			Date fechaHomologacion
+			Date fechaVencimiento
+		}
+	}
+}
+
+BoundedContext GestionDeEvidencias {
+	type = FEATURE
+	domainVisionStatement = "Gestiona la recopilación y consolidación de evidencias requeridas durante la atención del siniestro, publicando evento cuando el paquete está completo para habilitar el cierre."
+	implementationTechnology = "Servicio independiente con almacenamiento de objetos propio; consume eventos del bus; publica evento EvidenciasCompletas"
+	responsibilities = "Recopilar evidencias por hito de ejecución", "Validar completitud del paquete de evidencias", "Publicar evento EvidenciasCompletas para habilitar el cierre del siniestro"
+
+	Aggregate PaquetesDeEvidencia {
+		Entity PaqueteDeEvidencia {
+			aggregateRoot
+			String paqueteId
+			String referenciaSiniestroId
+			String referenciaEjecucionId
+			boolean completo
+			- List<Evidencia> evidencias
+		}
+		Entity Evidencia {
+			String evidenciaId
+			String tipoEvidencia
+			String urlArchivo
+			Date fechaCarga
+		}
+	}
+}
+
+BoundedContext CierreYFacturacionDeSiniestros {
+	type = FEATURE
+	domainVisionStatement = "Consolida las evidencias, formaliza el cierre del siniestro y genera los ítems facturables al partner, publicando evento para que PagosYLiquidaciones procese la liquidación de forma eventual."
+	implementationTechnology = "Servicio independiente con base de datos propia; consume evento EvidenciasCompletas; publica evento CierreDeSiniestroGenerado"
+	responsibilities = "Formalizar el cierre del siniestro", "Generar ítems facturables según el acuerdo comercial del partner", "Publicar evento CierreDeSiniestroGenerado al bus"
+
+	Aggregate FacturasAPartner {
+		Entity FacturaAPartner {
+			aggregateRoot
+			String facturaId
+			String referenciaSiniestroId
+			String partnerId
+			double montoTotal
+			String moneda
+			String estadoFactura
+			- List<ItemFacturable> items
+			Date fechaGeneracion
+		}
+		Entity ItemFacturable {
+			String itemId
+			String descripcion
+			double monto
+		}
+	}
+}
+
+BoundedContext Suscripciones {
+	type = FEATURE
+	domainVisionStatement = "Gestiona la contratación, configuración, renovación y cancelación de servicios recurrentes para el hogar, publicando eventos cuando una suscripción es activada o modificada."
+	implementationTechnology = "Servicio independiente con base de datos propia; expone API REST y publica eventos al bus"
+	responsibilities = "Gestionar contratos de servicio recurrente", "Publicar evento SuscripcionActivada", "Gestionar renovaciones y cancelaciones de suscripciones"
+
+	Aggregate ContratosDeServicioRecurrente {
+		Entity ContratoDeServicioRecurrente {
+			aggregateRoot
+			String contratoId
+			String clienteId
+			String tipoServicio
+			String periodicidad
+			String estadoContrato
+			Date fechaInicio
+			Date fechaVencimiento
+		}
+	}
+}
+
+BoundedContext PlanificacionRecurrente {
+	type = FEATURE
+	domainVisionStatement = "Coordina la programación de las actividades periódicas contratadas mediante suscripción, generando calendarios de ejecución en respuesta a eventos del contexto de Suscripciones."
+	implementationTechnology = "Servicio independiente con base de datos propia; consume evento SuscripcionActivada; publica evento ServicioProgramado para cada ocurrencia"
+	responsibilities = "Generar el calendario de servicios periódicos por suscripción", "Ajustar la planificación ante cambios de suscripción", "Publicar evento ServicioProgramado para cada ocurrencia del calendario"
+
+	Aggregate CalendariosDeServicio {
+		Entity CalendarioDeServicio {
+			aggregateRoot
+			String calendarioId
+			String referenciaContratoId
+			String tipoServicio
+			- List<FechaDeServicio> fechas
+		}
+		Entity FechaDeServicio {
+			String fechaId
+			Date fechaProgramada
+			String estadoFecha
+		}
+	}
+}
+
+BoundedContext GestionDeServiciosPeriodicos {
+	type = FEATURE
+	domainVisionStatement = "Gestiona la ejecución repetitiva de servicios como limpieza, jardinería o asistencia doméstica, coordinando con GestionDeTrabajos la creación del Trabajo de cada ocurrencia."
+	implementationTechnology = "Servicio independiente con base de datos propia; consume evento ServicioProgramado; publica evento ServicioPeriodicoListo al bus"
+	responsibilities = "Coordinar la ejecución de cada ocurrencia del servicio", "Gestionar el proveedor recurrente cuando aplica", "Publicar evento ServicioPeriodicoListo para GestionDeTrabajos"
+
+	Aggregate EjecucionesDeServicio {
+		Entity EjecucionDeServicio {
+			aggregateRoot
+			String ejecucionId
+			String referenciaCalendarioId
+			String tipoServicio
+			String proveedorRecurrenteId
+			String estadoEjecucion
+			Date fechaProgramada
+			Date fechaRealizada
+		}
+	}
+}
+
+BoundedContext WalletDeProveedores {
+	type = FEATURE
+	domainVisionStatement = "Permite gestionar fondos y operaciones financieras de los proveedores, habilitando la wallet una vez verificado el proveedor y acreditando liquidaciones de forma eventual."
+	implementationTechnology = "Servicio independiente con base de datos financiera propia; consume eventos del bus; expone API REST OHS/PL para ServiciosFinancierosYPagos"
+	responsibilities = "Activar la wallet del proveedor verificado", "Acreditar liquidaciones recibidas vía evento de forma eventual", "Exponer balance disponible para ServiciosFinancierosYPagos"
+
+	Aggregate Wallets {
+		Entity Wallet {
+			aggregateRoot
+			String walletId
+			String proveedorId
+			double saldo
+			String moneda
+			String estadoWallet
+			Date fechaActivacion
+		}
+	}
+}
+
+BoundedContext ServiciosFinancierosYPagos {
+	type = FEATURE
+	domainVisionStatement = "Gestiona servicios financieros dirigidos a los proveedores aprovechando el balance en wallet y el score operacional, facilitando el acceso a productos financieros diferenciados."
+	implementationTechnology = "Servicio independiente con base de datos financiera propia; consume APIs de WalletDeProveedores y ScoringYMicroprestamos"
+	responsibilities = "Gestionar productos financieros para proveedores", "Habilitar micropréstamos basados en el score operacional", "Registrar operaciones financieras de los proveedores"
+
+	Aggregate ProductosFinancieros {
+		Entity ProductoFinanciero {
+			aggregateRoot
+			String productoId
+			String proveedorId
+			String tipoProducto
+			double monto
+			String moneda
+			String estadoProducto
+			Date fechaDesembolso
+			Date fechaVencimiento
+		}
+	}
+}
+
+BoundedContext ScoringYMicroprestamos {
+	type = FEATURE
+	domainVisionStatement = "Utiliza el historial operacional de los proveedores para construir mecanismos de scoring que faciliten el acceso a microcréditos, construyendo su modelo de manera asíncrona a partir de eventos de trabajos."
+	implementationTechnology = "Servicio independiente con modelo de datos propio; consume feed de eventos de GestionDeTrabajos; expone API REST OHS/PL para ServiciosFinancierosYPagos"
+	responsibilities = "Construir el historial operacional del proveedor a partir de eventos de trabajos completados", "Calcular el score crediticio del proveedor", "Exponer API de scoring para ServiciosFinancierosYPagos"
+
+	Aggregate ScoresDeProveedores {
+		Entity ScoreDeProveedor {
+			aggregateRoot
+			String scoreId
+			String proveedorId
+			double puntuacion
+			int trabajosCompletados
+			double tasaExito
+			double montoAcumulado
+			Date ultimaActualizacion
+		}
+	}
+}
+
+BoundedContext SistemasDePartner {
+	type = SYSTEM
+	domainVisionStatement = "Sistemas propios de las más de 30 aseguradoras, bancos y comercios. En el TO-BE publican siniestros y configuran reglas mediante el Published Language REST definido por HdA, eliminando el Conformist del AS-IS."
+}
+
+BoundedContext SistemaDeAntecedentesJudiciales {
+	type = SYSTEM
+	domainVisionStatement = "Portal de la Policía Nacional para verificar antecedentes judiciales de proveedores. En el TO-BE la integración es asíncrona con ACL, eliminando la consulta manual que bloqueaba el expediente."
+}
+
+BoundedContext RegistroMercantil {
+	type = SYSTEM
+	domainVisionStatement = "Registro mercantil de la Cámara de Comercio para verificar la existencia y estado legal de proveedores que son empresas. En el TO-BE la integración es asíncrona con ACL."
+}
+
+BoundedContext EntidadesCertificadoras {
+	type = SYSTEM
+	domainVisionStatement = "Entidades certificadoras y consejos profesionales que validan vigencia de matrículas y títulos. En el TO-BE la integración es asíncrona asistida por IA con ACL, eliminando los bloqueos de 24-48 h."
+}
+
+BoundedContext PasarelaDePagos {
+	type = SYSTEM
+	domainVisionStatement = "Pasarela de pagos externa que ejecuta cobro, retención, liberación y devolución de fondos. En el TO-BE se invoca de forma asíncrona fuera de la transacción de negocio, con ACL que aísla su modelo del dominio de pagos."
+}
