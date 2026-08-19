@@ -1,239 +1,56 @@
-# CONTEXTO Y ALCANCE 
- 
-Hogar de los Alpes (HdA) es una compañía colombiana fundada en Bogotá en 2015 cuyo propósito es conectar hogares que necesitan resolver problemas con profesionales de confianza para servicios como plomería, electricidad, carpintería y pintura. Actualmente opera en Bogotá, Medellín, Cali, Cartagena y Barranquilla, y cuenta con un modelo de negocio que combina un marketplace B2C con operaciones B2B2C provenientes principalmente de aseguradoras, bancos y comercios. 
+# CONTEXTO Y ALCANCE
 
-La organización enfrenta un proceso de transformación debido a su crecimiento, la adquisición por parte de Seguros de los Alpes y la estrategia de expansión hacia México, Brasil y Argentina. Esta expansión implica nuevos países, monedas, regulaciones, zonas horarias y partners, además de un crecimiento proyectado hasta aproximadamente 36.000 trabajos diarios y más de 100.000 proveedores registrados. 
+## Contexto del proyecto
 
-Desde el punto de vista tecnológico, la operación actual se encuentra soportada sobre un monolito construido desde 2016. El crecimiento ha incrementado la dificultad para desarrollar nuevas capacidades: existen despliegues de 3 a 4 horas, semanas de QA y bloqueos entre equipos debido a que comparten una misma base de código. La compañía cuenta actualmente con aproximadamente 50 personas en ingeniería y espera duplicar este equipo durante los próximos 18 meses. 
+Hogar de los Alpes (HdA) es una compañía colombiana fundada en Bogotá en 2015 cuyo propósito es conectar hogares que necesitan resolver problemas con proveedores confiables de servicios como plomería, electricidad, carpintería y pintura. Opera en Bogotá, Medellín, Cali, Cartagena y Barranquilla mediante dos canales principales:
 
+- **Marketplace B2C:** una persona describe una necesidad, recibe apoyo para diagnosticarla y contrata directamente el servicio.
+- **B2B2C:** aseguradoras, bancos y comercios envían solicitudes de atención mediante integraciones y aplican condiciones particulares de red, SLA, límites, aprobaciones, evidencias y auditoría.
 
+El canal B2B2C origina aproximadamente el 70 % de los trabajos y el Marketplace, el 30 %. La operación actual supera los 12.000 trabajos diarios, cuenta con más de 45.000 proveedores registrados y se integra con más de 30 partners. La estrategia de expansión hacia México, Brasil y Argentina proyecta alrededor de 36.000 trabajos diarios y más de 100.000 proveedores.
 
-# Preguntas para entendimiento:
+## Problema que motiva la transformación
 
-## ¿Qué es Hogar de los Alpes?
+La operación está soportada por un monolito construido desde 2016. Según el enunciado, los equipos comparten la fuente de código y los ciclos de QA y despliegue, lo cual genera despliegues de tres a cuatro horas, semanas de validación y bloqueos entre equipos. La expansión regional, los picos de demanda y la incorporación de servicios recurrentes y productos financieros aumentarán estas tensiones.
 
-**Hogar de los Alpes (HdA)** es una compañía colombiana fundada en Bogotá en 2015 cuyo propósito es conectar hogares que necesitan resolver problemas con profesionales de confianza, entre ellos plomeros, electricistas, carpinteros y pintores.
+El enunciado no incluye el código, el esquema de datos ni los contratos internos del monolito. Por ello, los modelos AS-IS de la entrega son una **reconstrucción lógica** basada en los procesos, el organigrama y las integraciones descritas; no pretenden documentar módulos físicos que hayan sido comprobados en el sistema real.
 
-Actualmente opera en cinco ciudades colombianas:
+## Objetivo del proyecto y de la Entrega 1
 
-* Bogotá
-* Medellín
-* Cali
-* Cartagena
-* Barranquilla
+El objetivo general del proyecto es diseñar e implementar una arquitectura que soporte la migración del monolito hacia un sistema reactivo distribuido basado en eventos. La Entrega 1 no ejecuta esa migración: establece las bases estratégicas de dominio necesarias para decidir límites semánticos, responsabilidades y relaciones.
 
----
+La entrega comprende:
 
-## ¿Cómo genera negocio actualmente Hogar de los Alpes?
+1. Identificación y clasificación de dominios y subdominios.
+2. Definición de sus *vision statements*.
+3. Construcción del lenguaje ubicuo.
+4. EventStorming Big Picture AS-IS y TO-BE.
+5. Identificación de *bounded contexts* AS-IS y TO-BE.
+6. Relaciones entre contextos y mecanismos de desacoplamiento.
+7. Relación entre los contextos y los equipos responsables.
 
-El caso presenta dos grandes fuentes de trabajos:
+No forman parte de esta entrega la selección detallada de infraestructura, brokers o bases de datos; el diseño completo de agregados; la implementación de pruebas de concepto; ni la definición de microservicios uno a uno.
 
-### B2C — Marketplace
+## Decisión de alcance del EventStorming
 
-Personas que utilizan la aplicación o página web para solicitar un trabajo para su hogar. Un asistente conversacional ayuda a diagnosticar el problema y crear el trabajo con información como:
+El análisis adopta el **ciclo de vida del Trabajo** como flujo representativo y muestra sus entradas Marketplace B2C y B2B2C.
 
-* Categoría
-* Urgencia
-* Ubicación
-* Evidencia
+La narración comienza de dos maneras:
 
-### B2B2C
+- En Marketplace B2C, el cliente del hogar describe una necesidad que HdA diagnostica y estructura.
+- En B2B2C, un partner envía una solicitud previamente aprobada con identificadores y restricciones externas. La aseguradora conserva la propiedad de la póliza, la cobertura y la aprobación inicial; HdA coordina la prestación del servicio.
 
-Aseguradoras, bancos y comercios crean trabajos mediante integraciones con HdA.
+Ambas entradas convergen en la planificación, publicación, cotización, asignación, ejecución, gestión de novedades y cierre del Trabajo. Después del cierre, cada canal produce consecuencias diferentes: liberación del pago y calificación en Marketplace, o consolidación de evidencias y facturación al partner en B2B2C.
 
-En este modelo, el propietario del inmueble no necesariamente es usuario de HdA, porque la relación comercial puede ser con la aseguradora, banco o comercio. Cada partner tiene sus propias reglas, pasos y requisitos de compliance.
+Esta decisión permite analizar un flujo transversal a las capacidades principales sin reducir la historia al Marketplace ni atribuir a HdA decisiones que pertenecen a los sistemas externos de los partners.
 
-> **70 % de los trabajos provienen de B2B2C y 30 % del marketplace.**
+## Criterio de trazabilidad
 
----
+Para mantener una narrativa verificable, la documentación distingue entre:
 
-## ¿Cuál es el propósito del negocio?
+- **Hechos:** información explícita del enunciado del proyecto.
+- **Interpretaciones AS-IS:** reconstrucciones del equipo sobre la operación actual.
+- **Decisiones TO-BE:** propuestas de diseño que deben validarse con expertos de dominio.
+- **Hot spots:** preguntas o reglas todavía no confirmadas.
 
-El propósito de HdA es conectar hogares que necesitan resolver un problema con profesionales de confianza, garantizando que los proveedores estén verificados y calificados.
-
-En el marketplace B2C, el cliente busca principalmente:
-
-* Confianza en el proveedor
-* Precios justos
-* Seguridad
-* Garantía sobre el trabajo realizado
-
----
-
-## ¿Cuál es la magnitud actual de la operación?
-
-| Indicador                                             |               Magnitud |
-| ----------------------------------------------------- | ---------------------: |
-| Trabajos completados                                  |        +12.000 diarios |
-| Proveedores registrados                               |                +45.000 |
-| Proveedores con acreditación completa para siniestros |                  6.500 |
-| Partners B2B2C                                        |                    +30 |
-| Requests diarios                                      |           +25 millones |
-| Cobertura                                             | 5 ciudades colombianas |
-| Participación B2B2C                                   |                   70 % |
-| Participación Marketplace                             |                   30 % |
-
-El problema es que el modelo actual debe soportar una operación con alto volumen, múltiples actores, múltiples reglas y comportamiento variable.
-
----
-
-## ¿Cuál es el principal problema tecnológico actual?
-
-La operación completa corre actualmente sobre un **monolito construido desde 2016**.
-
-El crecimiento ha generado dificultades para desarrollar nuevas capacidades:
-
-* Despliegues de 3–4 horas
-* Semanas de QA
-* Equipos bloqueados entre sí
-* Dificultad para evolucionar capacidades de manera independiente
-
-Además, la organización ya tiene equipos alrededor de capacidades como:
-
-* Proveedores de Servicio
-* Marketplace
-* Siniestros
-* Gestión de Trabajos
-
-La estructura organizacional y los procesos del negocio ya muestran posibles fronteras de responsabilidad que deben ser analizadas.
-
----
-
-## ¿Por qué es necesario transformar la arquitectura?
-
-La transformación es necesaria porque HdA debe acompañar una expansión importante del negocio.
-
-La estrategia contempla expansión hacia:
-
-* México
-* Brasil
-* Argentina
-
-Además, se planea entrar en nuevos modelos de negocio como:
-
-* Servicios recurrentes bajo suscripción
-* Empleadas domésticas
-* Limpieza
-* Otros servicios para el hogar
-
-Por lo tanto, la arquitectura debe permitir que estas nuevas capacidades evolucionen sin frenar al resto de la plataforma.
-
----
-
-## ¿Cuál es el objetivo arquitectónico del proyecto?
-
-El objetivo explícito del proyecto es diseñar e implementar una arquitectura que soporte la migración del sistema monolítico hacia un **sistema reactivo distribuido basado en eventos**, capaz de acompañar la expansión regional y los nuevos modelos de negocio.
-
-El objetivo está relacionado con la evolución del dominio y de la arquitectura, utilizando eventos y límites de responsabilidad que permitan una evolución independiente.
-
----
-
-## ¿Qué se busca lograr específicamente en la Entrega I?
-
-La Entrega I establece las bases de la arquitectura de dominio.
-
-Se busca documentar:
-
-1. Dominios
-2. Subdominios
-3. Vision Statements
-4. Lenguaje ubicuo
-5. Flujos del lenguaje ubicuo
-6. Contextos acotados
-7. Relaciones entre contextos
-8. Mecanismos de desacoplamiento
-9. Relación entre equipos
-
-Todo esto debe analizarse tanto para el **AS-IS** como para el **TO-BE**.
-
----
-
-## ¿Cuál es el alcance funcional de nuestro análisis?
-
-El análisis de esta entrega comprende las principales capacidades de negocio de Hogar de los Alpes involucradas en:
-
-* Generación de trabajos
-* Gestión de trabajos
-* Ejecución de trabajos
-* Relación con proveedores
-* Relación con clientes
-* Relación con partners B2B2C
-* Capacidades que soportan estas operaciones
-
-Para el análisis detallado del lenguaje ubicuo y EventStorming se seleccionará un flujo representativo del negocio, mientras que el análisis de dominios, subdominios y contextos acotados considerará la organización como un todo, tal como exige la guía de la entrega.
-
----
-
-## ¿Qué flujo utilizaremos como foco del EventStorming?
-
-Para el análisis detallado del lenguaje ubicuo y EventStorming se propone utilizar como flujo principal:
-
-> **Siniestros y Pólizas B2B2C**
-
-Este flujo resulta representativo debido a la importancia que tiene el modelo B2B2C dentro de la operación de Hogar de los Alpes, que actualmente representa aproximadamente el **70 % de los trabajos**.
-
----
-
-## ¿Qué cubre el AS-IS?
-
-El **AS-IS** representa cómo funciona actualmente el negocio y cómo se encuentran organizadas sus responsabilidades antes de la transformación arquitectónica.
-
-El análisis AS-IS permitirá identificar:
-
-* Actores actuales
-* Eventos del negocio
-* Comandos
-* Procesos
-* Sistemas existentes
-* Sistemas externos
-* Reglas de negocio
-* Dependencias entre capacidades
-* Responsabilidades actuales
-* Lenguaje utilizado por los participantes
-
----
-
-## ¿Qué representa el TO-BE?
-
-El **TO-BE** representa la propuesta de organización futura del dominio y de sus contextos, considerando la migración desde el monolito hacia una arquitectura distribuida basada en eventos.
-
-El análisis TO-BE permitirá establecer:
-
-* Nuevos límites de responsabilidad
-* Contextos acotados
-* Relaciones entre contextos
-* Mecanismos de desacoplamiento
-* Eventos de integración
-* Responsabilidades de los equipos
-* Evolución independiente de las capacidades
-
----
-
-## ¿Qué queda fuera del alcance de esta entrega?
-
-En esta entrega no se pretende definir todavía la implementación detallada de la arquitectura distribuida, tecnologías específicas de infraestructura, configuración de brokers, bases de datos, despliegues, observabilidad ni los POC técnicos.
-
-El foco está en establecer el **modelo de dominio y sus límites**, mediante:
-
-* Dominios
-* Subdominios
-* Lenguaje ubicuo
-* EventStorming
-* Contextos acotados
-* Relaciones entre contextos
-
-Esto se realizará para los escenarios **AS-IS y TO-BE**.
-
----
-
-## ¿Quién es la audiencia de esta documentación?
-
-La audiencia principal es:
-
-* Equipo de ingeniería
-* Arquitectos de software
-* Expertos de dominio
-* Equipos responsables de las capacidades de negocio
-* Stakeholders involucrados en la transformación arquitectónica
-
-La documentación busca servir como referencia común para comprender el dominio, establecer un lenguaje ubicuo compartido y definir los límites de responsabilidad que orientarán la evolución arquitectónica de Hogar de los Alpes.
+La audiencia principal de esta documentación está compuesta por el equipo de ingeniería, arquitectos, expertos de dominio y responsables de las capacidades de negocio involucradas en la transformación.
