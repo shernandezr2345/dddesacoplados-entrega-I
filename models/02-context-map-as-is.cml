@@ -2,56 +2,53 @@ ContextMap HogarDeLosAlpesAsIs {
 	type = SYSTEM_LANDSCAPE
 	state = AS_IS
 
-	contains Marketplace
-	contains DatosEInteligenciaArtificial
-	contains GestionDeTrabajos
+	contains CapturaYDiagnosticoDeTrabajos
+	contains RiesgoYFraude
+	contains OrquestacionDeTrabajos
 	contains Cotizaciones
-	contains Asignacion
+	contains MatchingDeProveedores
 	contains GestionDeEjecucion
-	contains GestionDeProveedores
-	contains AcreditacionYElegibilidad
-	contains ReglasDePartner
-	contains CalidadGarantiasYDisputas
-	contains PagosYLiquidaciones
-	contains GestionDeSiniestros
-	contains GestionDePolizasYCoberturas
-	contains EvaluacionYAprobacionDeSiniestros
-	contains OrquestacionDeAtencionDelSiniestro
-	contains ReglasDePartnerParaSiniestros
-	contains GestionDeProveedoresHomologados
-	contains GestionDeEvidencias
-	contains CierreYFacturacionDeSiniestros
+	contains RedDeProveedores
+	contains ConfianzaDeProveedores
+	contains ReglasYOrquestacionDePartner
+	contains EvidenciaCalidadYGarantias
+	contains ProcesamientoDePagos
+	contains EntradaDeSolicitudesDePartner
+	contains ElegibilidadParaRedDePartner
+	contains EvidenciaYAuditoria
+	contains FacturacionAPartners
+	contains Plataforma
 	contains SistemasDePartner
 	contains SistemaDeAntecedentesJudiciales
 	contains RegistroMercantil
 	contains EntidadesCertificadoras
 	contains PasarelaDePagos
 
-	DatosEInteligenciaArtificial [SK]<->[SK] Marketplace {
+	RiesgoYFraude [SK]<->[SK] CapturaYDiagnosticoDeTrabajos {
 		implementationTechnology = "El asistente conversacional construye la solicitud y persiste la especificación del trabajo dentro del mismo proceso y la misma transacción"
 	}
 
-	Marketplace [SK]<->[SK] GestionDeTrabajos {
+	CapturaYDiagnosticoDeTrabajos [SK]<->[SK] OrquestacionDeTrabajos {
 		implementationTechnology = "La solicitud del hogar instancia directamente las tablas trabajo y sub_trabajo del esquema compartido"
 	}
 
-	GestionDeTrabajos [SK]<->[SK] Cotizaciones {
+	OrquestacionDeTrabajos [SK]<->[SK] Cotizaciones {
 		implementationTechnology = "Llamadas in-process y llave foránea sub_trabajo_id en el mismo esquema; un cambio de alcance reinicia la cotización en la misma transacción"
 	}
 
-	GestionDeTrabajos [SK]<->[SK] Asignacion {
+	OrquestacionDeTrabajos [SK]<->[SK] MatchingDeProveedores {
 		implementationTechnology = "La publicación y el proveedor asignado son columnas de estado del propio sub-trabajo"
 	}
 
-	GestionDeTrabajos [SK]<->[SK] GestionDeEjecucion {
+	OrquestacionDeTrabajos [SK]<->[SK] GestionDeEjecucion {
 		implementationTechnology = "El seguimiento de la ejecución escribe sobre las mismas filas del trabajo que gobierna el motor de flujo"
 	}
 
-	GestionDeTrabajos [SK]<->[SK] PagosYLiquidaciones {
+	OrquestacionDeTrabajos [SK]<->[SK] ProcesamientoDePagos {
 		implementationTechnology = "La retención y la liberación de fondos se ejecutan en la misma transacción de la transición de estado del trabajo"
 	}
 
-	GestionDeTrabajos [SK]<->[SK] ReglasDePartner {
+	OrquestacionDeTrabajos [SK]<->[SK] ReglasYOrquestacionDePartner {
 		implementationTechnology = "Las reglas de más de 30 partners están embebidas como condicionales dentro del motor de flujo del monolito"
 	}
 
@@ -59,122 +56,118 @@ ContextMap HogarDeLosAlpesAsIs {
 		implementationTechnology = "Una novedad dispara la recotización invocando directamente el servicio de cotizaciones dentro del monolito"
 	}
 
-	GestionDeEjecucion [SK]<->[SK] CalidadGarantiasYDisputas {
+	GestionDeEjecucion [SK]<->[SK] EvidenciaCalidadYGarantias {
 		implementationTechnology = "Disputas y garantías son tablas hijas del trabajo con borrado en cascada; el cierre y la aceptación ocurren en la misma transacción"
 	}
 
-	GestionDeEjecucion [SK]<->[SK] GestionDeEvidencias {
+	GestionDeEjecucion [SK]<->[SK] EvidenciaYAuditoria {
 		implementationTechnology = "Las evidencias se adjuntan al trabajo desde la misma consola operativa y comparten el servidor de archivos de la aplicación"
 	}
 
-	Asignacion [SK]<->[SK] GestionDeProveedores {
+	MatchingDeProveedores [SK]<->[SK] RedDeProveedores {
 		implementationTechnology = "El matching resuelve la oferta con un JOIN SQL directo sobre proveedor, servicio_declarado, cobertura y disponibilidad"
 	}
 
-	Asignacion [SK]<->[SK] AcreditacionYElegibilidad {
+	MatchingDeProveedores [SK]<->[SK] ConfianzaDeProveedores {
 		implementationTechnology = "El filtro de elegibilidad consulta en línea el estado de acreditación; la regla de confianza vive dentro de la consulta de búsqueda"
 	}
 
-	Asignacion [SK]<->[SK] ReglasDePartner {
+	MatchingDeProveedores [SK]<->[SK] ReglasYOrquestacionDePartner {
 		implementationTechnology = "La red de proveedores permitida por el partner se evalúa dentro de la misma consulta que ordena los candidatos"
 	}
 
-	GestionDeProveedores [SK]<->[SK] AcreditacionYElegibilidad {
+	RedDeProveedores [SK]<->[SK] ConfianzaDeProveedores {
 		implementationTechnology = "El estado de verificación es una columna de las tablas proveedor y técnico; el expediente y el perfil comercial son el mismo registro"
 	}
 
-	CalidadGarantiasYDisputas [SK]<->[SK] GestionDeProveedores {
+	EvidenciaCalidadYGarantias [SK]<->[SK] RedDeProveedores {
 		implementationTechnology = "La reputación se materializa como campo calculado sobre la tabla proveedor mediante un trigger"
 	}
 
-	GestionDeSiniestros [SK]<->[SK] GestionDePolizasYCoberturas {
-		implementationTechnology = "La cobertura aplicable se resuelve leyendo las tablas de póliza dentro de la misma transacción de registro del siniestro"
-	}
-
-	GestionDeSiniestros [SK]<->[SK] EvaluacionYAprobacionDeSiniestros {
-		implementationTechnology = "La decisión de aprobación es una columna de estado del propio siniestro; no existe contrato entre registro y evaluación"
-	}
-
-	GestionDeSiniestros [SK]<->[SK] OrquestacionDeAtencionDelSiniestro {
+	EntradaDeSolicitudesDePartner [SK]<->[SK] ReglasYOrquestacionDePartner {
 		implementationTechnology = "La orquestación lee y escribe el mismo registro de siniestro que mantiene el módulo de recepción"
 	}
 
-	OrquestacionDeAtencionDelSiniestro [SK]<->[SK] GestionDeTrabajos {
-		implementationTechnology = "El siniestro aprobado instancia directamente un Trabajo y arrastra el identificador externo del partner al agregado"
-	}
-
-	OrquestacionDeAtencionDelSiniestro [SK]<->[SK] ReglasDePartnerParaSiniestros {
-		implementationTechnology = "SLA, montos máximos y pasos de aprobación se evalúan como condicionales dentro del propio flujo de atención"
-	}
-
-	ReglasDePartnerParaSiniestros [SK]<->[SK] GestionDeProveedoresHomologados {
+	ReglasYOrquestacionDePartner [SK]<->[SK] ElegibilidadParaRedDePartner {
 		implementationTechnology = "La red permitida y las homologaciones vigentes se leen de la misma tabla de acuerdo comercial del partner"
 	}
 
-	GestionDeProveedoresHomologados [SK]<->[SK] AcreditacionYElegibilidad {
+	ElegibilidadParaRedDePartner [SK]<->[SK] ConfianzaDeProveedores {
 		implementationTechnology = "La homologación del partner se persiste como columna adicional del expediente de acreditación de HdA"
 	}
 
-	ReglasDePartner [SK]<->[SK] ReglasDePartnerParaSiniestros {
-		implementationTechnology = "Ambos conjuntos de reglas comparten la tabla acuerdo_partner y se despliegan juntos"
-	}
-
-	GestionDeEvidencias [SK]<->[SK] CierreYFacturacionDeSiniestros {
+	EvidenciaYAuditoria [SK]<->[SK] FacturacionAPartners {
 		implementationTechnology = "El cierre valida la completitud de la evidencia recorriendo las tablas hijas del trabajo dentro de la misma transacción"
 	}
 
-	CierreYFacturacionDeSiniestros [SK]<->[SK] GestionDeTrabajos {
+	FacturacionAPartners [SK]<->[SK] OrquestacionDeTrabajos {
 		implementationTechnology = "La generación de ítems facturables recorre el histórico de trabajo y sub_trabajo con consultas directas sobre el esquema operativo"
 	}
 
-	GestionDeEjecucion [U,S]->[D,C] DatosEInteligenciaArtificial {
+	GestionDeEjecucion [U,S]->[D,C] RiesgoYFraude {
 		implementationTechnology = "Consultas de solo lectura sobre la base de datos operativa para priorización y automatización; no existe canal de eventos"
 		exposedAggregates = Ejecuciones
 	}
 
-	PagosYLiquidaciones [U,S]->[D,C] DatosEInteligenciaArtificial {
+	ProcesamientoDePagos [U,S]->[D,C] RiesgoYFraude {
 		implementationTechnology = "Extracción periódica desde el esquema de pagos para detección de fraude, con exportes a hoja de cálculo"
 		exposedAggregates = IntencionesDePago
 	}
 
-	CalidadGarantiasYDisputas [U,S]->[D,C] DatosEInteligenciaArtificial {
+	EvidenciaCalidadYGarantias [U,S]->[D,C] RiesgoYFraude {
 		implementationTechnology = "Lectura directa de disputas y calificaciones para alimentar modelos analíticos"
 		exposedAggregates = CasosDeCalidad
 	}
 
-	CierreYFacturacionDeSiniestros [U,S]->[D,C] PagosYLiquidaciones {
+	FacturacionAPartners [U,S]->[D,C] ProcesamientoDePagos {
 		implementationTechnology = "La liquidación consulta los ítems facturables generados por el cierre mediante acceso directo a sus tablas"
 		exposedAggregates = FacturasAPartner
 	}
 
-	SistemasDePartner [U]->[D,CF] GestionDeSiniestros {
+	SistemasDePartner [U]->[D,CF] EntradaDeSolicitudesDePartner {
 		implementationTechnology = "Un adaptador distinto por cada uno de los más de 30 partners, en REST, SOAP y archivos planos; el modelo externo entra sin traducción al dominio"
 	}
 
-	SistemasDePartner [U]->[D,CF] ReglasDePartner {
+	SistemasDePartner [U]->[D,CF] ReglasYOrquestacionDePartner {
 		implementationTechnology = "Las condiciones comerciales y de compliance de cada partner se replican tal cual en la configuración del monolito"
 	}
 
-	SistemaDeAntecedentesJudiciales [U]->[D,CF] AcreditacionYElegibilidad {
+	SistemaDeAntecedentesJudiciales [U]->[D,CF] ConfianzaDeProveedores {
 		implementationTechnology = "Consulta manual: un agente ingresa al portal de la Policía Nacional y transcribe el resultado al expediente"
 	}
 
-	RegistroMercantil [U]->[D,CF] AcreditacionYElegibilidad {
+	RegistroMercantil [U]->[D,CF] ConfianzaDeProveedores {
 		implementationTechnology = "Consulta manual del registro mercantil y del estado legal en Cámara de Comercio; el certificado se adjunta como archivo"
 	}
 
-	EntidadesCertificadoras [U]->[D,CF] AcreditacionYElegibilidad {
+	EntidadesCertificadoras [U]->[D,CF] ConfianzaDeProveedores {
 		implementationTechnology = "Validación de títulos y matrículas con respuesta de 24 a 48 horas que bloquea el avance del expediente"
 	}
 
-	PasarelaDePagos [U]->[D,CF] PagosYLiquidaciones {
+	PasarelaDePagos [U]->[D,CF] ProcesamientoDePagos {
 		implementationTechnology = "SDK invocado de forma síncrona dentro de la transacción de negocio; los códigos de estado de la pasarela se persisten en el modelo de dominio"
+	}
+
+	Plataforma [U,S]->[D,C] OrquestacionDeTrabajos {
+		implementationTechnology = "Clases base, identidad y notificaciones de las que hereda el motor de flujo; no hay contrato, se hereda directamente de las clases del paquete común"
+	}
+
+	Plataforma [U,S]->[D,C] RedDeProveedores {
+		implementationTechnology = "El proveedor extiende la cuenta genérica de plataforma y comparte con ella la tabla de identidad"
+	}
+
+	Plataforma [U,S]->[D,C] EntradaDeSolicitudesDePartner {
+		implementationTechnology = "Las credenciales de los más de 30 partners son cuentas técnicas del mismo esquema de identidad"
+	}
+
+	Plataforma [U,S]->[D,C] GestionDeEjecucion {
+		implementationTechnology = "Los roles y permisos de los cerca de 100 agentes están definidos en el modelo de acceso genérico"
 	}
 }
 
-BoundedContext Marketplace {
+BoundedContext CapturaYDiagnosticoDeTrabajos {
 	type = FEATURE
-	domainVisionStatement = "Conecta la demanda de los hogares con la oferta de proveedores mediante la solicitud y contratación de trabajos a través de la web y la aplicación móvil."
+	domainVisionStatement = "Capta la necesidad del hogar por la web y la aplicación móvil, la diagnostica mediante el asistente conversacional y la estructura como un Trabajo con categoría, urgencia, ubicación y evidencia inicial."
 	implementationTechnology = "Módulo del monolito construido desde 2016"
 	responsibilities = "Recibir la solicitud del hogar", "Presentar cotizaciones comparables", "Registrar la selección del proveedor", "Recoger la calificación del servicio"
 	knowledgeLevel = CONCRETE
@@ -202,9 +195,9 @@ BoundedContext Marketplace {
 	}
 }
 
-BoundedContext DatosEInteligenciaArtificial {
+BoundedContext RiesgoYFraude {
 	type = FEATURE
-	domainVisionStatement = "Proporciona capacidades de datos e inteligencia artificial para el diagnóstico asistido de la necesidad del hogar, la priorización de casos, la detección de fraude y la automatización de tareas de otros procesos."
+	domainVisionStatement = "Detecta fraude y evalúa el riesgo de trabajos, proveedores y pagos, y alimenta la priorización y la automatización de otros procesos con modelos analíticos."
 	implementationTechnology = "Servicio de modelos invocado desde el monolito, con acceso de lectura al esquema operativo"
 	responsibilities = "Conducir el diálogo de diagnóstico", "Clasificar categoría y urgencia", "Priorizar casos", "Detectar señales de fraude"
 	knowledgeLevel = CONCRETE
@@ -241,9 +234,9 @@ BoundedContext DatosEInteligenciaArtificial {
 	}
 }
 
-BoundedContext GestionDeTrabajos {
+BoundedContext OrquestacionDeTrabajos {
 	type = FEATURE
-	domainVisionStatement = "Gestiona el ciclo de vida del Trabajo desde su creación hasta su ejecución y cierre, incluyendo sub-trabajos, actividades, dependencias y novedades."
+	domainVisionStatement = "Gestiona el ciclo de vida del Trabajo desde su creación hasta su cierre, incluyendo sub-trabajos, actividades, dependencias, paralelismo y novedades."
 	implementationTechnology = "Núcleo del monolito y punto de convergencia de todos los modulos"
 	responsibilities = "Crear y descomponer el trabajo en sub-trabajos", "Determinar orden, paralelismo y bloqueos", "Gestionar transiciones de estado", "Registrar novedades y disparar recotización o reasignación"
 	knowledgeLevel = CONCRETE
@@ -356,9 +349,9 @@ BoundedContext Cotizaciones {
 	}
 }
 
-BoundedContext Asignacion {
+BoundedContext MatchingDeProveedores {
 	type = FEATURE
-	domainVisionStatement = "Determina los proveedores candidatos y la asignación de trabajos considerando categoría, zona, disponibilidad, acreditación y reglas aplicables del partner."
+	domainVisionStatement = "Determina los proveedores candidatos y resuelve la asignación considerando categoría, zona, disponibilidad, elegibilidad y las redes permitidas por el partner."
 	implementationTechnology = "Consultas SQL con múltiples JOIN sobre el esquema compartido de proveedores, acreditación y trabajos"
 	responsibilities = "Publicar la oportunidad a la oferta elegible", "Calcular y ordenar candidatos", "Registrar la asignación", "Reabrir la publicación ante una reasignación"
 	knowledgeLevel = CONCRETE
@@ -401,7 +394,7 @@ BoundedContext Asignacion {
 
 BoundedContext GestionDeEjecucion {
 	type = FEATURE
-	domainVisionStatement = "Coordina la ejecución y el seguimiento de los trabajos, incluyendo actividades, proveedores involucrados, novedades y cumplimiento de las condiciones acordadas."
+	domainVisionStatement = "Coordina la ejecución y el seguimiento de los trabajos apoyándose en los cerca de 100 agentes de gestión, incluyendo actividades, novedades y cumplimiento de las condiciones acordadas."
 	implementationTechnology = "Consola de back-office con acceso directo a las tablas operativas, operada por cerca de 100 agentes de gestión"
 	responsibilities = "Monitorear el avance y los SLA", "Gestionar novedades y reasignaciones", "Coordinar entre cliente, proveedor y partner", "Registrar la terminación del trabajo"
 	knowledgeLevel = CONCRETE
@@ -435,7 +428,7 @@ BoundedContext GestionDeEjecucion {
 	}
 }
 
-BoundedContext GestionDeProveedores {
+BoundedContext RedDeProveedores {
 	type = FEATURE
 	domainVisionStatement = "Administra la red de profesionales y empresas, sus servicios declarados, cobertura geográfica, disponibilidad y reputación."
 	implementationTechnology = "Módulo del monolito sobre el esquema relacional compartido, con más de 45.000 proveedores registrados"
@@ -486,9 +479,9 @@ BoundedContext GestionDeProveedores {
 	}
 }
 
-BoundedContext AcreditacionYElegibilidad {
+BoundedContext ConfianzaDeProveedores {
 	type = FEATURE
-	domainVisionStatement = "Gestiona la verificación, acreditación y homologación de proveedores y determina para que trabajos pueden ser elegibles según servicio y zona."
+	domainVisionStatement = "Verifica y acredita a proveedores y técnicos frente a los requisitos propios de HdA y determina para qué servicios y zonas quedan habilitados."
 	implementationTechnology = "Proceso mayoritariamente manual ejecutado por agentes humanos sobre portales externos; solo el expediente se persiste en el monolito"
 	responsibilities = "Abrir y tramitar expedientes de verificación", "Verificar antecedentes por persona", "Validar títulos y certificaciones", "Verificar existencia legal de empresas", "Aprobar por servicio y zona", "Programar revalidaciones"
 	knowledgeLevel = CONCRETE
@@ -545,9 +538,9 @@ BoundedContext AcreditacionYElegibilidad {
 	}
 }
 
-BoundedContext ReglasDePartner {
+BoundedContext ReglasYOrquestacionDePartner {
 	type = FEATURE
-	domainVisionStatement = "Gestiona las particularidades de aseguradoras, bancos y comercios: SLA, aprobaciones, montos, proveedores homologados, compliance y flujos específicos."
+	domainVisionStatement = "Concentra las condiciones de todos los partners B2B2C —SLA, redes permitidas, montos máximos, pasos de aprobación, compliance y auditoría— y orquesta la atención de la solicitud aprobada hasta convertirla en un Trabajo."
 	implementationTechnology = "Reglas parcialmente en tablas de configuración y parcialmente embebidas como condicionales en el código del motor de flujo"
 	responsibilities = "Definir la red de proveedores admitida", "Definir SLA por categoría", "Definir umbrales y pasos de aprobación", "Definir requisitos de compliance y auditoría", "Definir las tarifas del acuerdo comercial"
 	knowledgeLevel = CONCRETE
@@ -582,11 +575,42 @@ BoundedContext ReglasDePartner {
 			Date vigenteDesde
 		}
 	}
+
+	Aggregate AtencionesDeSolicitud {
+		Entity AtencionDeSiniestro {
+			aggregateRoot
+			String atencionId
+			String siniestroId
+			String trabajoId
+			String estadoAtencion
+			Date fechaDerivacion
+			- List<CondicionAplicada> condicionesAplicadas
+		}
+		Entity CondicionAplicada {
+			String condicionId
+			String tipoCondicion
+			String valorCondicion
+			String origenRegla
+		}
+	}
+	Aggregate ReglasDeAtencion {
+		Entity ReglaDeAtencion {
+			aggregateRoot
+			String reglaAtencionId
+			String partnerId
+			String categoria
+			boolean permiteProveedoresDeMarketplace
+			double montoMaximo
+			int horasDeAtencion
+			String evidenciaExigida
+			boolean exigeAuditoria
+		}
+	}
 }
 
-BoundedContext CalidadGarantiasYDisputas {
+BoundedContext EvidenciaCalidadYGarantias {
 	type = FEATURE
-	domainVisionStatement = "Gestiona problemas de calidad, reclamaciones, garantías, disputas y compensaciones derivados de los trabajos ejecutados, y consolida la reputación del proveedor."
+	domainVisionStatement = "Gestiona la aceptación del trabajo, las reclamaciones de calidad, las garantías, las disputas y las compensaciones, y consolida la reputación del proveedor."
 	implementationTechnology = "Tablas hijas del trabajo en el mismo esquema; los archivos de soporte se almacenan en el servidor de la aplicación"
 	responsibilities = "Gestionar la aceptación y el cierre de calidad", "Tramitar disputas y compensaciones", "Administrar garantías posventa", "Consolidar calificaciones y reputación"
 	knowledgeLevel = CONCRETE
@@ -637,9 +661,9 @@ BoundedContext CalidadGarantiasYDisputas {
 	}
 }
 
-BoundedContext PagosYLiquidaciones {
+BoundedContext ProcesamientoDePagos {
 	type = FEATURE
-	domainVisionStatement = "Gestiona los pagos asociados a los trabajos, las liquidaciones a proveedores y los procesos de facturación con participantes y partners."
+	domainVisionStatement = "Gestiona el cobro, la retención, la liberación, la devolución y la conciliación de los pagos del canal Marketplace, y las liquidaciones a los proveedores."
 	implementationTechnology = "Módulo del monolito que invoca el SDK de la pasarela de forma síncrona dentro de la transacción de negocio"
 	responsibilities = "Crear la intención de pago", "Retener fondos hasta la terminación", "Liberar el pago al proveedor", "Procesar devoluciones", "Conciliar con la pasarela", "Liquidar la facturación al partner"
 	knowledgeLevel = CONCRETE
@@ -691,9 +715,9 @@ BoundedContext PagosYLiquidaciones {
 	}
 }
 
-BoundedContext GestionDeSiniestros {
+BoundedContext EntradaDeSolicitudesDePartner {
 	type = FEATURE
-	domainVisionStatement = "Gestiona el ciclo de vida del siniestro desde su recepción y evaluación hasta su aprobación y derivación a la atención correspondiente."
+	domainVisionStatement = "Recibe las solicitudes ya aprobadas que los partners B2B2C crean por integración, tanto de siniestros como de instalaciones, las registra y mantiene el estado sincronizado con el sistema del partner."
 	implementationTechnology = "Conjunto de adaptadores dentro del monolito, uno por partner, que soportan más de 25 millones de peticiones diarias"
 	responsibilities = "Recibir el siniestro desde el sistema del partner", "Registrar y clasificar el caso", "Mantener el estado sincronizado con el partner", "Derivar el caso aprobado a la atención"
 	knowledgeLevel = CONCRETE
@@ -724,115 +748,9 @@ BoundedContext GestionDeSiniestros {
 	}
 }
 
-BoundedContext GestionDePolizasYCoberturas {
+BoundedContext ElegibilidadParaRedDePartner {
 	type = FEATURE
-	domainVisionStatement = "Determina las condiciones de cobertura aplicables al siniestro y las restricciones que deben considerarse antes de autorizar su atención."
-	implementationTechnology = "Datos replicados desde el sistema de la aseguradora y almacenados en el esquema del monolito"
-	responsibilities = "Mantener las pólizas vigentes por partner", "Resolver la cobertura aplicable al caso", "Aplicar deducibles, límites y exclusiones"
-	knowledgeLevel = CONCRETE
-
-	Aggregate Polizas {
-		Entity Poliza {
-			aggregateRoot
-			String polizaId
-			String partnerId
-			String aseguradoId
-			String numeroPoliza
-			Date vigenteDesde
-			Date vigenteHasta
-			String estadoPoliza
-			- List<Cobertura> coberturas
-		}
-		Entity Cobertura {
-			String coberturaId
-			String categoria
-			double limiteCobertura
-			double deducible
-			String exclusiones
-		}
-	}
-}
-
-BoundedContext EvaluacionYAprobacionDeSiniestros {
-	type = FEATURE
-	domainVisionStatement = "Gestiona la evaluación previa realizada por la aseguradora y las decisiones de aprobación necesarias para iniciar la atención del caso."
-	implementationTechnology = "Estados de aprobación persistidos como columnas del propio siniestro dentro del monolito"
-	responsibilities = "Registrar la evaluación previa del partner", "Registrar la decisión de aprobación o rechazo", "Solicitar nuevas aprobaciones ante cambios de alcance", "Dejar traza auditable de la decisión"
-	knowledgeLevel = CONCRETE
-
-	Aggregate Aprobaciones {
-		Entity AprobacionDeSiniestro {
-			aggregateRoot
-			String aprobacionSiniestroId
-			String siniestroId
-			String resultadoEvaluacion
-			double montoAutorizado
-			String aprobadorId
-			String motivoRechazo
-			Date fechaDecision
-			- List<ReaprobacionPorCambio> reaprobaciones
-		}
-		Entity ReaprobacionPorCambio {
-			String reaprobacionId
-			String motivoCambio
-			double montoAdicional
-			String resultadoReaprobacion
-			Date fechaReaprobacion
-		}
-	}
-}
-
-BoundedContext OrquestacionDeAtencionDelSiniestro {
-	type = FEATURE
-	domainVisionStatement = "Coordina la transformación del siniestro aprobado en un Trabajo y su posterior atención, aplicando las condiciones particulares del partner."
-	implementationTechnology = "Lógica de conversión embebida en el mismo motor de flujo que gobierna los trabajos de Marketplace"
-	responsibilities = "Convertir el siniestro aprobado en un Trabajo", "Aplicar las condiciones del partner al flujo", "Propagar novedades hacia el partner", "Coordinar el avance de la atención"
-	knowledgeLevel = CONCRETE
-
-	Aggregate AtencionesDeSiniestro {
-		Entity AtencionDeSiniestro {
-			aggregateRoot
-			String atencionId
-			String siniestroId
-			String trabajoId
-			String estadoAtencion
-			Date fechaDerivacion
-			- List<CondicionAplicada> condicionesAplicadas
-		}
-		Entity CondicionAplicada {
-			String condicionId
-			String tipoCondicion
-			String valorCondicion
-			String origenRegla
-		}
-	}
-}
-
-BoundedContext ReglasDePartnerParaSiniestros {
-	type = FEATURE
-	domainVisionStatement = "Aplica las reglas específicas de cada aseguradora, incluyendo proveedores permitidos, SLA, montos máximos, aprobaciones y requisitos de auditoría."
-	implementationTechnology = "Tabla de acuerdo comercial compartida con el módulo general de reglas de partner"
-	responsibilities = "Determinar la red permitida por siniestro", "Aplicar SLA de respuesta y resolución", "Aplicar montos máximos y pasos de aprobación", "Definir la evidencia exigida para el cierre"
-	knowledgeLevel = CONCRETE
-
-	Aggregate ReglasDeAtencion {
-		Entity ReglaDeAtencion {
-			aggregateRoot
-			String reglaAtencionId
-			String partnerId
-			String categoria
-			boolean permiteProveedoresDeMarketplace
-			double montoMaximo
-			int horasDeAtencion
-			String evidenciaExigida
-			boolean exigeAuditoria
-		}
-	}
-}
-
-BoundedContext GestionDeProveedoresHomologados {
-	type = FEATURE
-	domainVisionStatement = "Determina que proveedores pueden participar en la atención de determinados siniestros según las condiciones y homologaciones exigidas por cada aseguradora."
+	domainVisionStatement = "Determina qué proveedores están homologados por cada partner y pueden participar en la atención de sus solicitudes."
 	implementationTechnology = "Homologaciones persistidas como columnas adicionales del expediente de acreditación de HdA"
 	responsibilities = "Registrar la homologación otorgada por cada partner", "Mantener su vigencia", "Resolver la red permitida para un siniestro", "Excluir proveedores no homologados"
 	knowledgeLevel = CONCRETE
@@ -851,9 +769,9 @@ BoundedContext GestionDeProveedoresHomologados {
 	}
 }
 
-BoundedContext GestionDeEvidencias {
+BoundedContext EvidenciaYAuditoria {
 	type = FEATURE
-	domainVisionStatement = "Gestiona la recopilación y consolidación de evidencias requeridas durante la atención del siniestro para soportar la ejecución, la auditoría y el cierre."
+	domainVisionStatement = "Gestiona la recopilación y consolidación de las evidencias que exige cada partner para soportar la ejecución, la auditoría y el cierre."
 	implementationTechnology = "Archivos almacenados en el servidor de la aplicación y referenciados desde tablas hijas del trabajo"
 	responsibilities = "Recolectar la evidencia exigida por el partner", "Validar completitud y formato", "Consolidar el expediente probatorio", "Sincronizar evidencias con el partner"
 	knowledgeLevel = CONCRETE
@@ -879,9 +797,9 @@ BoundedContext GestionDeEvidencias {
 	}
 }
 
-BoundedContext CierreYFacturacionDeSiniestros {
+BoundedContext FacturacionAPartners {
 	type = FEATURE
-	domainVisionStatement = "Consolida las evidencias, formaliza el cierre del Trabajo y genera la información necesaria para facturar a la aseguradora según el acuerdo comercial."
+	domainVisionStatement = "Consolida las evidencias, formaliza el cierre del Trabajo y genera la información necesaria para facturar al partner según el acuerdo comercial."
 	implementationTechnology = "Proceso por lotes que recorre el esquema operativo con consultas directas"
 	responsibilities = "Validar las condiciones de cierre", "Formalizar el cierre del trabajo B2B2C", "Derivar los ítems facturables", "Preparar la factura del período"
 	knowledgeLevel = CONCRETE
@@ -905,6 +823,42 @@ BoundedContext CierreYFacturacionDeSiniestros {
 			String categoria
 			double monto
 			boolean evidenciaCompleta
+		}
+	}
+}
+
+BoundedContext Plataforma {
+	type = FEATURE
+	domainVisionStatement = "Provee identidad, control de acceso, notificaciones y las clases base compartidas por todo el monolito, de las que dependen los demás módulos."
+	implementationTechnology = "Paquete transversal del monolito del que heredan todos los módulos; no tiene despliegue propio"
+	responsibilities = "Autenticar y autorizar a clientes, proveedores, agentes y partners", "Emitir notificaciones por correo, mensajería y aplicación", "Proveer las clases base y utilidades compartidas del monolito"
+	knowledgeLevel = CONCRETE
+
+	Aggregate Identidades {
+		Entity Cuenta {
+			aggregateRoot
+			String cuentaId
+			String tipoDeSujeto
+			String correoElectronico
+			String estadoDeCuenta
+			- List<Rol> roles
+		}
+		Entity Rol {
+			String rolId
+			String nombreDeRol
+			String ambito
+		}
+	}
+
+	Aggregate Notificaciones {
+		Entity Notificacion {
+			aggregateRoot
+			String notificacionId
+			String canal
+			String destinatarioId
+			String plantilla
+			String estadoDeEnvio
+			Date fechaDeEnvio
 		}
 	}
 }
